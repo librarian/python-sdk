@@ -3,7 +3,7 @@ import time
 import jwt
 import pytest
 
-from yandexcloud._auth_fabric import get_auth_token_requester
+from nebiusai._auth_fabric import get_auth_token_requester
 
 
 def test_both_params_error(token, service_account_key):

@@ -1,4 +1,4 @@
-from yandexcloud._backoff import backoff_exponential_jittered_min_interval
+from nebiusai._backoff import backoff_exponential_jittered_min_interval
 
 
 def test_backoff_exponential_jittered_min_interval():

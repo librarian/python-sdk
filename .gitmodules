@@ -1,3 +1,9 @@
-[submodule "cloudapi"]
-	path = cloudapi
-	url = https://github.com/yandex-cloud/cloudapi.git
+[submodule "api"]
+	path = api
+	url = https://github.com/nebius/api.git
+[submodule "protovalidate"]
+	path = protovalidate
+	url = https://github.com/bufbuild/protovalidate.git
+[submodule "googleapis"]
+	path = googleapis
+	url = https://github.com/googleapis/googleapis

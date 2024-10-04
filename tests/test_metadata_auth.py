@@ -1,4 +1,4 @@
-from yandexcloud._auth_fabric import get_auth_token_requester
+from nebiusai._auth_fabric import get_auth_token_requester
 
 from .metadata_server_mock import metadata_server
 

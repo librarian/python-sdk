@@ -3,9 +3,9 @@ from concurrent import futures
 
 import grpc
 
-import yandex.cloud.compute.v1.zone_pb2 as zone_pb2
-import yandex.cloud.compute.v1.zone_service_pb2 as zone_service_pb2
-import yandex.cloud.compute.v1.zone_service_pb2_grpc as zone_service_pb2_grpc
+import nebius.compute.v1.zone_pb2 as zone_pb2
+import nebius.compute.v1.zone_service_pb2 as zone_service_pb2
+import nebius.compute.v1.zone_service_pb2_grpc as zone_service_pb2_grpc
 
 _DEFAULT_SERVICE_PORT = "50051"
 _SERVICE_ADDR = "localhost:" + _DEFAULT_SERVICE_PORT

@@ -1,6 +1,6 @@
 import time
 
-from yandexcloud._operation_waiter import OperationWaiter
+from nebiusai._operation_waiter import OperationWaiter
 
 
 class _OperationMock:

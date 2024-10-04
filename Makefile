@@ -22,13 +22,13 @@ test: ## run tests ONLY for current python version
 	python3 -m pytest
 
 lint: ## run linters, formatters for current python versions
-	python3 -m flake8 yandexcloud
-	python3 -m pylint yandexcloud
-	python3 -m mypy yandexcloud
+	python3 -m flake8 nebius
+	python3 -m pylint nebius
+	python3 -m mypy nebius
 
 format:
-	python3 -m isort yandexcloud setup.py tests examples
-	python3 -m black yandexcloud setup.py tests examples
+	python3 -m isort nebius setup.py tests examples
+	python3 -m black nebius setup.py tests examples
 
 test-all-versions: ## run test for multiple python versions using docker
 	# python 3.12 not provided in image so we skip it
@@ -38,17 +38,20 @@ submodule:  ## update submodules
 	git submodule update --init --recursive --remote
 
 proto:  ## regenerate code from protobuf
-	rm -rf yandex
+	rm -rf nebius
+	
+	buf generate buf.build/bufbuild/protovalidate
 	python3 -m grpc_tools.protoc \
-        --proto_path=cloudapi \
-        --proto_path=cloudapi/third_party/googleapis \
+        --proto_path=api \
+		--proto_path=protovalidate/proto/protovalidate \
+		--proto_path=googleapis \
         --python_out=. \
         --mypy_out=. \
         --grpc_python_out=. \
         --mypy_grpc_out=. \
-        `find cloudapi/yandex -name '*.proto'`
-	find yandex -type d -exec touch {}/__init__.py \;
-	touch yandex/py.typed \;
+        `find api/ -name '*.proto'`
+	find nebius -type d -exec touch {}/__init__.py \;
+	touch nebius/py.typed \;
 
 help: ## Show help message
 	@IFS=$$'\n' ; \

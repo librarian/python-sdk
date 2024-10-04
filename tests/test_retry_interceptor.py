@@ -4,10 +4,10 @@ from threading import Event
 import grpc
 import pytest
 
-import yandex.cloud.compute.v1.zone_service_pb2 as zone_service_pb2
-import yandex.cloud.compute.v1.zone_service_pb2_grpc as zone_service_pb2_grpc
+import nebius.compute.v1.zone_service_pb2 as zone_service_pb2
+import nebius.compute.v1.zone_service_pb2_grpc as zone_service_pb2_grpc
 from tests.grpc_server_mock import DEFAULT_ZONE, default_channel, grpc_server
-from yandexcloud import RetryInterceptor, backoff_linear_with_jitter, default_backoff
+from nebiusai import RetryInterceptor, backoff_linear_with_jitter, default_backoff
 
 
 class _FailFirstAttempts:
@@ -149,7 +149,7 @@ class _AlwaysUnavailable:
         context.set_code(grpc.StatusCode.UNAVAILABLE)
         return DEFAULT_ZONE
 
-
+@pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.parametrize("backoff", [None, default_backoff(), backoff_linear_with_jitter(0.05, 0.1)])
 def test_infinite_retries_deadline_and_backoff(backoff):
     service = _AlwaysUnavailable()

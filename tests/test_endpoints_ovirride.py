@@ -4,16 +4,16 @@ from unittest.mock import Mock, patch
 import grpc
 import pytest
 
-from yandex.cloud.vpc.v1.network_service_pb2 import (
+from nebius.vpc.v1.network_service_pb2 import (
     ListNetworksRequest,
     ListNetworksResponse,
 )
-from yandex.cloud.vpc.v1.network_service_pb2_grpc import (
+from nebius.vpc.v1.network_service_pb2_grpc import (
     NetworkServiceStub,
     add_NetworkServiceServicer_to_server,
 )
-from yandexcloud import SDK
-from yandexcloud._channels import Channels
+from nebiusai import SDK
+from nebiusai._channels import Channels
 
 INSECURE_SERVICE_PORT = "50051"
 SECURE_SERVICE_PORT = "50052"

@@ -1,19 +1,19 @@
 from setuptools import find_packages, setup
 
-packages = find_packages(".", include=["yandexcloud*", "yandex*"])
+packages = find_packages(".", include=["nebius*"])
 
-__version__ = "0.319.0"
+__version__ = "0.1.0"
 
 with open("README.md") as file:
     README = file.read()
 
 setup(
-    name="yandexcloud",
+    name="nebius",
     version=__version__,
-    description="The Yandex.Cloud official SDK",
-    url="https://github.com/yandex-cloud/python-sdk",
+    description="Nebius SDK",
+    url="https://github.com/librarian/nebius-sdk",
     author="Yandex LLC",
-    author_email="cloud@support.yandex.ru",
+    author_email="menkovich@gmail.com",
     long_description=README,
     long_description_content_type="text/markdown",
     include_package_data=True,
