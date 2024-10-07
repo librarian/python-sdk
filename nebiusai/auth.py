@@ -1,8 +1,8 @@
 from typing import Dict, Optional
 
-from yandex.cloud.iam.v1.iam_token_service_pb2_grpc import IamTokenServiceStub
+from nebius.iam.v1.token_service_pb2_grpc import IamTokenServiceStub
 from nebiusai._auth_fabric import (
-    YC_API_ENDPOINT,
+    API_ENDPOINT,
     IamTokenAuth,
     MetadataAuth,
     get_auth_token_requester,
@@ -18,7 +18,7 @@ def get_auth_token(
     endpoint: Optional[str] = None,
 ) -> str:
     if endpoint is None:
-        endpoint = YC_API_ENDPOINT
+        endpoint = API_ENDPOINT
     requester = get_auth_token_requester(
         token=token,
         service_account_key=service_account_key,

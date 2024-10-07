@@ -10,21 +10,21 @@ import jwt
 import requests
 import six
 
-from yandex.cloud.iam.v1.iam_token_service_pb2 import CreateIamTokenRequest
+from nebius.iam.v1.token_service_pb2 import CreateIamTokenRequest
 
 _MDS_ADDR = "169.254.169.254"
 _MDS_URL = "http://{}/computeMetadata/v1/instance/service-accounts/default/token"
 _MDS_HEADERS = {"Metadata-Flavor": "Google"}
 _MDS_TIMEOUT = (1.0, 1.0)  # 1sec connect, 1sec read
 
-YC_API_ENDPOINT = "api.cloud.yandex.net"
+API_ENDPOINT = "api.eu-north1.nebius.cloud"
 
 
-def set_up_yc_api_endpoint(endpoint: str) -> str:
+def set_up_api_endpoint(endpoint: str) -> str:
     # pylint: disable-next=global-statement
-    global YC_API_ENDPOINT
-    YC_API_ENDPOINT = endpoint
-    return YC_API_ENDPOINT
+    global API_ENDPOINT
+    API_ENDPOINT = endpoint
+    return API_ENDPOINT
 
 
 def __validate_service_account_key(sa_key: Optional[dict]) -> bool:
@@ -49,7 +49,7 @@ def __validate_service_account_key(sa_key: Optional[dict]) -> bool:
         error_message = (
             "Invalid Service Account Key: private key is in incorrect format."
             f"Should start with {private_key_prefix}.\n"
-            "To obtain one you can use YC CLI: yc iam key create --output sa.json --service-account-id <id>"
+            "To obtain one you can use CLI: nebius iam auth-public-key generate --output sa.json --service-account-id <id>"
         )
         raise RuntimeError(error_message)
     return True
@@ -74,7 +74,7 @@ class TokenAuth:
         self.__oauth_token = token
 
     def get_token_request(self) -> "CreateIamTokenRequest":
-        return CreateIamTokenRequest(yandex_passport_oauth_token=self.__oauth_token)
+        return CreateIamTokenRequest(oauth_token=self.__oauth_token)
 
 
 class ServiceAccountAuth:
@@ -82,7 +82,7 @@ class ServiceAccountAuth:
 
     def __init__(self, sa_key: Dict[str, str], endpoint: Optional[str] = None):
         self.__sa_key = sa_key
-        self._endpoint = endpoint if endpoint is not None else YC_API_ENDPOINT
+        self._endpoint = endpoint if endpoint is not None else API_ENDPOINT
 
     def get_token_request(self) -> "CreateIamTokenRequest":
         return CreateIamTokenRequest(jwt=self.__prepare_request(self._endpoint))
@@ -124,12 +124,12 @@ def get_auth_token_requester(
     endpoint: Optional[str] = None,
 ) -> Union["MetadataAuth", "TokenAuth", "IamTokenAuth", "ServiceAccountAuth"]:
     if endpoint is None:
-        endpoint = YC_API_ENDPOINT
+        endpoint = API_ENDPOINT
     auth_methods = [("token", token), ("service_account_key", service_account_key), ("iam_token", iam_token)]
     auth_methods = [(auth_type, value) for auth_type, value in auth_methods if value is not None]
 
     if len(auth_methods) == 0:
-        metadata_addr = metadata_addr if metadata_addr is not None else os.environ.get("YC_METADATA_ADDR", _MDS_ADDR)
+        metadata_addr = metadata_addr if metadata_addr is not None else os.environ.get("METADATA_ADDR", _MDS_ADDR)
         return MetadataAuth(metadata_addr)
 
     if len(auth_methods) > 1:

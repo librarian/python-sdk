@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Optional, Type, Union
 import grpc
 from google.protobuf.empty_pb2 import Empty
 
-from yandex.cloud.operation.operation_service_pb2 import GetOperationRequest
-from yandex.cloud.operation.operation_service_pb2_grpc import OperationServiceStub
+from nebius.common.v1.operation_service_pb2 import GetOperationRequest
+from nebius.common.v1.operation_service_pb2_grpc import OperationServiceStub
 from nebiusai._backoff import backoff_exponential_jittered_min_interval
 from nebiusai._retry_interceptor import RetryInterceptor
 from nebiusai.operations import (
@@ -18,7 +18,7 @@ from nebiusai.operations import (
 )
 
 if TYPE_CHECKING:
-    from yandex.cloud.operation.operation_pb2 import Operation
+    from nebius.common.v1.operation_pb2 import Operation
     from nebiusai._sdk import SDK
 
 

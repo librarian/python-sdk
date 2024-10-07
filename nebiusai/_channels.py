@@ -4,17 +4,17 @@ from typing import Dict, Optional
 
 import grpc
 
-from yandex.cloud.endpoint.api_endpoint_service_pb2 import ListApiEndpointsRequest
-from yandex.cloud.endpoint.api_endpoint_service_pb2_grpc import ApiEndpointServiceStub
+from nebius.endpoint.api_endpoint_service_pb2 import ListApiEndpointsRequest
+from nebius.endpoint.api_endpoint_service_pb2_grpc import ApiEndpointServiceStub
 from nebiusai import _auth_plugin
-from nebiusai._auth_fabric import YC_API_ENDPOINT, get_auth_token_requester
+from nebiusai._auth_fabric import API_ENDPOINT, get_auth_token_requester
 
 try:
     VERSION = version("nebiusai")
 except PackageNotFoundError:
     VERSION = "0.0.0"
 
-SDK_USER_AGENT = f"yandex-cloud-python-sdk/{VERSION}"
+SDK_USER_AGENT = f"nebius-python-sdk/{VERSION}"
 logger = logging.getLogger(__name__)
 
 
@@ -37,7 +37,7 @@ class Channels:
             private_key=private_key,
             certificate_chain=certificate_chain,
         )
-        self._endpoint = endpoint if endpoint is not None else YC_API_ENDPOINT
+        self._endpoint = endpoint if endpoint is not None else API_ENDPOINT
         self._token_requester = get_auth_token_requester(
             token=token,
             service_account_key=service_account_key,

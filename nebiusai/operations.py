@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Generic, Optional, TypeVar
 if TYPE_CHECKING:
     import google.protobuf.message
 
-    from yandex.cloud.operation.operation_pb2 import Operation
+    from nebius.common.v1.operation_pb2 import Operation
 
 
 RequestType = TypeVar("RequestType", bound="google.protobuf.message.Message")  # pylint: disable=C0103

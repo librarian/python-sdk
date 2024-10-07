@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 import grpc
 from six.moves.urllib.parse import urlparse
 
-from yandex.cloud.iam.v1.iam_token_service_pb2_grpc import IamTokenServiceStub
+from nebius.iam.v1.token_service_pb2_grpc import IamTokenServiceStub
 
 if TYPE_CHECKING:
-    from yandex.cloud.iam.v1.iam_token_service_pb2 import CreateIamTokenResponse
+    from nebius.iam.v1.token_service_pb2 import CreateIamTokenResponse
     from nebiusai._auth_fabric import (
         IamTokenAuth,
         MetadataAuth,
@@ -42,8 +42,8 @@ class Credentials(grpc.AuthMetadataPlugin):
     def _call(self, context: "grpc.AuthMetadataContext", callback: "grpc.AuthMetadataPluginCallback") -> None:
         u = urlparse(context.service_url)
         if u.path in (
-            "/yandex.cloud.iam.v1.IamTokenService",
-            "/yandex.cloud.endpoint.ApiEndpointService",
+            "/nebius.iam.v1.IamTokenService",
+            "/nebius.endpoint.ApiEndpointService",
         ):
             callback(tuple(), None)
             return

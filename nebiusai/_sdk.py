@@ -10,7 +10,7 @@ from nebiusai._retry_interceptor import RetryInterceptor
 if TYPE_CHECKING:
     import logging
 
-    from yandex.cloud.operation.operation_pb2 import Operation
+    from nebius.common.v1.operation_pb2 import Operation
     from nebiusai._operation_waiter import OperationWaiter
     from nebiusai.operations import (
         MetaType,
@@ -129,8 +129,8 @@ def _service_for_ctor(stub_ctor: Any) -> str:
     m = inspect.getmodule(stub_ctor)
     if m is not None:
         name = m.__name__
-        if not name.startswith("yandex.cloud"):
-            raise RuntimeError(f"Not a yandex.cloud service {stub_ctor}")
+        if not name.startswith("nebius"):
+            raise RuntimeError(f"Not a nebius service {stub_ctor}")
 
         for k, v in _supported_modules:
             if name.startswith(k):
@@ -140,60 +140,11 @@ def _service_for_ctor(stub_ctor: Any) -> str:
 
 
 _supported_modules = [
-    ("yandex.cloud.ai.foundation_models", "ai-foundation-models"),
-    ("yandex.cloud.ai.llm", "ai-llm"),
-    ("yandex.cloud.ai.ocr", "ai-vision-ocr"),
-    ("yandex.cloud.ai.stt", "ai-stt"),
-    ("yandex.cloud.ai.translate", "ai-translate"),
-    ("yandex.cloud.ai.assistants", "ai-assistants"),
-    ("yandex.cloud.ai.files", "ai-files"),
-    ("yandex.cloud.ai.tts", "ai-speechkit"),
-    ("yandex.cloud.ai.vision", "ai-vision"),
-    ("yandex.cloud.apploadbalancer", "alb"),
-    ("yandex.cloud.billing", "billing"),
-    ("yandex.cloud.cdn", "cdn"),
-    ("yandex.cloud.certificatemanager.v1.certificate_content_service", "certificate-manager-data"),
-    ("yandex.cloud.certificatemanager", "certificate-manager"),
-    ("yandex.cloud.compute", "compute"),
-    ("yandex.cloud.containerregistry", "container-registry"),
-    ("yandex.cloud.dataproc.manager", "dataproc-manager"),
-    ("yandex.cloud.dataproc", "dataproc"),
-    ("yandex.cloud.datasphere", "datasphere"),
-    ("yandex.cloud.datatransfer", "datatransfer"),
-    ("yandex.cloud.dns", "dns"),
-    ("yandex.cloud.endpoint", "endpoint"),
-    ("yandex.cloud.iam", "iam"),
-    ("yandex.cloud.iot.devices", "iot-devices"),
-    ("yandex.cloud.k8s", "managed-kubernetes"),
-    ("yandex.cloud.kms.v1.symmetric_crypto_service", "kms-crypto"),
-    ("yandex.cloud.kms", "kms"),
-    ("yandex.cloud.loadbalancer", "load-balancer"),
-    ("yandex.cloud.loadtesting", "loadtesting"),
-    ("yandex.cloud.lockbox.v1.payload_service", "lockbox-payload"),
-    ("yandex.cloud.lockbox", "lockbox"),
-    ("yandex.cloud.logging.v1.log_ingestion_service", "log-ingestion"),
-    ("yandex.cloud.logging.v1.log_reading_service", "log-reading"),
-    ("yandex.cloud.logging", "logging"),
-    ("yandex.cloud.marketplace", "marketplace"),
-    ("yandex.cloud.mdb.clickhouse", "managed-clickhouse"),
-    ("yandex.cloud.mdb.elasticsearch", "managed-elasticsearch"),
-    ("yandex.cloud.mdb.greenplum", "managed-greenplum"),
-    ("yandex.cloud.mdb.kafka", "managed-kafka"),
-    ("yandex.cloud.mdb.mongodb", "managed-mongodb"),
-    ("yandex.cloud.mdb.mysql", "managed-mysql"),
-    ("yandex.cloud.mdb.opensearch", "managed-opensearch"),
-    ("yandex.cloud.mdb.postgresql", "managed-postgresql"),
-    ("yandex.cloud.mdb.redis", "managed-redis"),
-    ("yandex.cloud.mdb.sqlserver", "managed-sqlserver"),
-    ("yandex.cloud.operation", "operation"),
-    ("yandex.cloud.organizationmanager", "organization-manager"),
-    ("yandex.cloud.resourcemanager", "resource-manager"),
-    ("yandex.cloud.serverless.apigateway.websocket", "apigateway-connections"),
-    ("yandex.cloud.serverless.apigateway", "serverless-apigateway"),
-    ("yandex.cloud.serverless.containers", "serverless-containers"),
-    ("yandex.cloud.serverless.functions", "serverless-functions"),
-    ("yandex.cloud.serverless.triggers", "serverless-triggers"),
-    ("yandex.cloud.storage", "storage-api"),
-    ("yandex.cloud.vpc", "vpc"),
-    ("yandex.cloud.ydb", "ydb"),
+    ("nebius.common", "common"),
+    ("nebius.compute", "compute"),
+    ("nebius.registry", "container-registry"),
+    ("nebius.iam", "iam"),
+    ("nebius.mk8s", "managed-kubernetes"),
+    ("nebius.storage", "storage-api"),
+    ("nebius.vpc", "vpc"),
 ]

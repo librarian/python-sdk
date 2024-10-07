@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Optional
 
-from yandex.cloud.iam.v1.service_account_service_pb2 import ListServiceAccountsRequest
-from yandex.cloud.iam.v1.service_account_service_pb2_grpc import (
+from nebius.iam.v1.service_account_service_pb2 import ListServiceAccountsRequest
+from nebius.iam.v1.service_account_service_pb2_grpc import (
     ServiceAccountServiceStub,
 )
-from yandex.cloud.vpc.v1.network_service_pb2 import ListNetworksRequest
-from yandex.cloud.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
-from yandex.cloud.vpc.v1.subnet_service_pb2 import ListSubnetsRequest
-from yandex.cloud.vpc.v1.subnet_service_pb2_grpc import SubnetServiceStub
+from nebius.vpc.v1.network_service_pb2 import ListNetworksRequest
+from nebius.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
+from nebius.vpc.v1.subnet_service_pb2 import ListSubnetsRequest
+from nebius.vpc.v1.subnet_service_pb2_grpc import SubnetServiceStub
 
 if TYPE_CHECKING:
     from nebiusai._sdk import SDK
