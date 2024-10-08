@@ -1,4 +1,4 @@
-"""Main package for Yandex.Cloud SDK."""
+"""Main package for Nebius SDK."""
 
 # flake8: noqa
 from nebiusai._auth_fabric import set_up_api_endpoint

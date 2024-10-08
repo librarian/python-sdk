@@ -6,6 +6,7 @@ import grpc
 from nebiusai import _channels, _helpers, _operation_waiter
 from nebiusai._backoff import backoff_exponential_with_jitter
 from nebiusai._retry_interceptor import RetryInterceptor
+from nebiusai._auth_fabric import _get_api_service_url
 
 if TYPE_CHECKING:
     import logging
@@ -73,6 +74,7 @@ class SDK:
 
     def client(
         self,
+        service_ctor: Type,
         stub_ctor: Type,
         interceptor: Union[
             grpc.UnaryUnaryClientInterceptor,
@@ -85,6 +87,7 @@ class SDK:
         insecure: bool = False,
     ) -> Any:
         service = _service_for_ctor(stub_ctor)
+        endpoint = endpoint or _get_api_service_url(service_ctor)
         channel = self._channels.channel(service, endpoint, insecure)
         if interceptor is not None:
             channel = grpc.intercept_channel(channel, interceptor)
@@ -109,13 +112,14 @@ class SDK:
         self,
         request: Type["RequestType"],
         service: Any,
+        stub: Any,
         method_name: str,
         response_type: Optional[Type["ResponseType"]] = None,
         meta_type: Optional[Type["MetaType"]] = None,
         timeout: Optional[float] = None,
         logger: Optional["logging.Logger"] = None,
     ) -> Union["OperationResult", "OperationError"]:
-        operation = getattr(self.client(service), method_name)(request)
+        operation = getattr(self.client(service, stub), method_name)(request)
         return self.wait_operation_and_get_result(
             operation,
             response_type=response_type,
@@ -139,12 +143,13 @@ def _service_for_ctor(stub_ctor: Any) -> str:
     raise RuntimeError(f"Unknown service {stub_ctor}")
 
 
+
 _supported_modules = [
     ("nebius.common", "common"),
     ("nebius.compute", "compute"),
-    ("nebius.registry", "container-registry"),
+    ("nebius.registry", "registry"),
     ("nebius.iam", "iam"),
-    ("nebius.mk8s", "managed-kubernetes"),
-    ("nebius.storage", "storage-api"),
+    ("nebius.mk8s", "mk8s"),
+    ("nebius.storage", "storage"),
     ("nebius.vpc", "vpc"),
 ]

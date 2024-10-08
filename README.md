@@ -4,31 +4,29 @@
 
 <!-- Badges -->
 
-[pypi-image]: https://img.shields.io/pypi/v/yandexcloud
-[pypi-url]: https://pypi.org/project/yandexcloud/
-[build-image]: https://github.com/yandex-cloud/python-sdk/actions/workflows/run-tests.yml/badge.svg
-[build-url]: https://github.com/yandex-cloud/python-sdk/actions/workflows/run-tests.yml
-[license-image]: https://img.shields.io/github/license/yandex-cloud/python-sdk.svg
-[license-url]: https://github.com/yandex-cloud/python-sdk/blob/master/LICENSE
+[build-image]: https://github.com/librarian/python-sdk/actions/workflows/run-tests.yml/badge.svg
+[build-url]: https://github.com/librarian/python-sdk/actions/workflows/run-tests.yml
+[license-image]: https://img.shields.io/github/license/librarian/python-sdk.svg
+[license-url]: https://github.com/librarian/python-sdk/blob/master/LICENSE
 
-# Yandex.Cloud SDK (Python) 
+# Nebius SDK (Python)
 
-Need to automate your infrastructure or use services provided by Yandex.Cloud? We've got you covered.
+Need to automate your infrastructure or use services provided by Nebius? We've got you covered.
 
 Installation:
 
-    pip install yandexcloud
+    pip install nebiusai
 
 ## Getting started
 
 There are several options for authorization your requests - OAuth Token,
 Metadata Service (if you're executing your code inside VMs or Cloud Functions
-running in Yandex.Cloud), Service Account Keys, and externally created IAM tokens.
+running in Nebius), Service Account Keys, and externally created IAM tokens.
 
 ### OAuth Token
 
 ```python
-sdk = yandexcloud.SDK(token='AQAD-.....')
+sdk = nebiusai.SDK(token='AQAD-.....')
 ```
 
 ### Metadata Service
@@ -36,26 +34,26 @@ sdk = yandexcloud.SDK(token='AQAD-.....')
 Don't forget to assign Service Account for your Instance or Function and grant required roles.
 
 ```python
-sdk = yandexcloud.SDK()
+sdk = nebiusai.SDK()
 ```
 
 ### Service Account Keys
 
 ```python
-# you can store and read it from JSON file 
+# you can store and read it from JSON file
 sa_key = {
     "id": "...",
     "service_account_id": "...",
     "private_key": "..."
 }
 
-sdk = yandexcloud.SDK(service_account_key=sa_key)
+sdk = nebiusai.SDK(service_account_key=sa_key)
 ```
 
 ### IAM tokens
 
 ```python
-sdk = yandexcloud.SDK(iam_token="t1.9eu...")
+sdk = nebiusai.SDK(iam_token="t1.9eu...")
 ```
 
 Check `examples` directory for more examples.
@@ -66,69 +64,21 @@ Check `examples` directory for more examples.
 
 | Service Name                                                           | Alias                    |
 |------------------------------------------------------------------------|--------------------------|
-| yandex.cloud.ai.foundation_models                                      | ai-foundation-models     |
-| yandex.cloud.ai.llm                                                    | ai-llm                   |
-| yandex.cloud.ai.ocr                                                    | ai-vision-ocr            |
-| yandex.cloud.ai.stt                                                    | ai-stt                   |
-| yandex.cloud.ai.translate                                              | ai-translate             |
-| yandex.cloud.ai.tts                                                    | ai-speechkit             |
-| yandex.cloud.ai.vision                                                 | ai-vision                |
-| yandex.cloud.apploadbalancer                                           | alb                      |
-| yandex.cloud.billing                                                   | billing                  |
-| yandex.cloud.cdn                                                       | cdn                      |
-| yandex.cloud.certificatemanager.v1.certificate_content_service         | certificate-manager-data |
-| yandex.cloud.certificatemanager                                        | certificate-manager      |
-| yandex.cloud.compute                                                   | compute                  |
-| yandex.cloud.containerregistry                                         | container-registry       |
-| yandex.cloud.dataproc.manager                                          | dataproc-manager         |
-| yandex.cloud.dataproc                                                  | dataproc                 |
-| yandex.cloud.datasphere                                                | datasphere               |
-| yandex.cloud.datatransfer                                              | datatransfer             |
-| yandex.cloud.dns                                                       | dns                      |
-| yandex.cloud.endpoint                                                  | endpoint                 |
-| yandex.cloud.iam                                                       | iam                      |
-| yandex.cloud.iot.devices                                               | iot-devices              |
-| yandex.cloud.k8s                                                       | managed-kubernetes       |
-| yandex.cloud.kms.v1.symmetric_crypto_service                           | kms-crypto               |
-| yandex.cloud.kms                                                       | kms                      |
-| yandex.cloud.loadbalancer                                              | load-balancer            |
-| yandex.cloud.loadtesting                                               | loadtesting              |
-| yandex.cloud.lockbox.v1.payload_service                                | lockbox-payload          |
-| yandex.cloud.lockbox                                                   | lockbox                  |
-| yandex.cloud.logging.v1.log_ingestion_service                          | log-ingestion            |
-| yandex.cloud.logging.v1.log_reading_service                            | log-reading              |
-| yandex.cloud.logging                                                   | logging                  |
-| yandex.cloud.marketplace                                               | marketplace              |
-| yandex.cloud.mdb.clickhouse                                            | managed-clickhouse       |
-| yandex.cloud.mdb.elasticsearch                                         | managed-elasticsearch    |
-| yandex.cloud.mdb.greenplum                                             | managed-greenplum        |
-| yandex.cloud.mdb.kafka                                                 | managed-kafka            |
-| yandex.cloud.mdb.mongodb                                               | managed-mongodb          |
-| yandex.cloud.mdb.mysql                                                 | managed-mysql            |
-| yandex.cloud.mdb.opensearch                                            | managed-opensearch       |
-| yandex.cloud.mdb.postgresql                                            | managed-postgresql       |
-| yandex.cloud.mdb.redis                                                 | managed-redis            |
-| yandex.cloud.mdb.sqlserver                                             | managed-sqlserver        |
-| yandex.cloud.operation                                                 | operation                |
-| yandex.cloud.organizationmanager                                       | organization-manager     |
-| yandex.cloud.resourcemanager                                           | resource-manager         |
-| yandex.cloud.serverless.apigateway.websocket                           | apigateway-connections   |
-| yandex.cloud.serverless.apigateway                                     | serverless-apigateway    |
-| yandex.cloud.serverless.containers                                     | serverless-containers    |
-| yandex.cloud.serverless.functions                                      | serverless-functions     |
-| yandex.cloud.serverless.triggers                                       | serverless-triggers      |
-| yandex.cloud.storage                                                   | storage-api              |
-| yandex.cloud.vpc                                                       | vpc                      |
-| yandex.cloud.ydb                                                       | ydb                      |
+
+| nebius.cloud.compute                                                   | compute                  |
+| nebius.cloud.registry                                         | container-registry       |
+| nebius.cloud.iam                                                       | iam                      |
+| nebius.cloud.storage                                                   | storage-api              |
+| nebius.cloud.vpc                                                       | vpc                      |
 
 
 #### Override in client
 ```python
-from yandex.cloud.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
-from yandexcloud import SDK
+from nebiusai.cloud.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
+from nebiusai import SDK
 
 sdk = SDK(iam_token="t1.9eu...")
-new_network_client_endpoint = "example.new.vpc.very.new.yandex:50051"
+new_network_client_endpoint = "example.new.vpc.very.new:50051"
 insecure = False # by default is False, but if server does not support verification can be set to True
 network_client = sdk.client(NetworkServiceStub, endpoint=new_network_client_endpoint, insecure=False)
 ```
@@ -136,9 +86,9 @@ network_client = sdk.client(NetworkServiceStub, endpoint=new_network_client_endp
 #### Override in sdk config
 To override endpoints provide dict in format {alias : new-endpoint}
 ```python
-from yandex.cloud.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
-from yandexcloud import SDK
-new_network_client_endpoint = "example.new.vpc.very.new.yandex:50051"
+from nebius.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
+from nebiusai import SDK
+new_network_client_endpoint = "example.new.vpc.very.new:50051"
 sdk = SDK(iam_token="t1.9eu...", endpoints={"vpc": new_network_client_endpoint})
 insecure = False # by default is False, but if server does not support verification can be set to True
 network_client = sdk.client(NetworkServiceStub, insecure=False)
@@ -146,22 +96,13 @@ network_client = sdk.client(NetworkServiceStub, insecure=False)
 
 Notice: if both overrides are used for same endpoint, override by client has priority
 
-#### Switch SDK region
-```python
-from yandexcloud import SDK, set_up_yc_api_endpoint
-kz_region_endpoint = "api.yandexcloud.kz"
-# this will make SDK list endpoints from KZ yc installation 
-sdk = SDK(iam_token="t1.9eu...", endpoint="api.yandexcloud.kz")
-# or you can use global function
-set_up_yc_api_endpoint(kz_region_endpoint)
-```
 
 ## Contributing
 ### Dependencies
 Use `make deps` command to install library, its production and development dependencies.
 
 ### Formatting
-Use `make format` to autoformat code with black tool. 
+Use `make format` to autoformat code with black tool.
 
 ### Tests
 - `make test` to run tests for current python version
@@ -172,8 +113,8 @@ Use `make format` to autoformat code with black tool.
 
 
 ### Maintaining
-If pull request consists of several meaningful commits, that should be preserved, 
-then use "Rebase and merge" option. Otherwise use "Squash and merge". 
+If pull request consists of several meaningful commits, that should be preserved,
+then use "Rebase and merge" option. Otherwise use "Squash and merge".
 
-New release (changelog, tag and pypi upload) will be automatically created 
+New release (changelog, tag and pypi upload) will be automatically created
 on each push to master via Github Actions workflow.

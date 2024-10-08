@@ -4,10 +4,9 @@ from typing import Dict, Optional
 
 import grpc
 
-from nebius.endpoint.api_endpoint_service_pb2 import ListApiEndpointsRequest
-from nebius.endpoint.api_endpoint_service_pb2_grpc import ApiEndpointServiceStub
 from nebiusai import _auth_plugin
-from nebiusai._auth_fabric import API_ENDPOINT, get_auth_token_requester
+from nebiusai._auth_fabric import API_ENDPOINT, get_auth_token_requester, _get_api_service_url
+import nebius.iam.v1.token_exchange_service_pb2 as token_exchange_service_pb2
 
 try:
     VERSION = version("nebiusai")
@@ -60,8 +59,9 @@ class Channels:
             if insecure:
                 logger.info("Insecure option is ON, no IAM endpoint used for verification")
                 return grpc.insecure_channel(endpoint, options=self.channel_options)
-            logger.info("Insecure option is OFF,IAM endpoint %s used for verification")
-            creds: grpc.ChannelCredentials = self._get_creds(self.endpoints["iam"])
+            iam_endpoint = _get_api_service_url(token_exchange_service_pb2)
+            logger.info("Insecure option is OFF,IAM endpoint %s used for verification", iam_endpoint)
+            creds: grpc.ChannelCredentials = self._get_creds(iam_endpoint)
             return grpc.secure_channel(endpoint, creds, options=self.channel_options)
         if service not in self._config_endpoints and insecure:
             logger.warning(
@@ -80,7 +80,8 @@ class Channels:
             self.endpoints[service],
         )
 
-        creds = self._get_creds(self.endpoints["iam"])
+        iam_endpoint = _get_api_service_url(token_exchange_service_pb2)
+        creds = self._get_creds(iam_endpoint)
         if service not in self.endpoints:
             raise RuntimeError(f"Unknown service: {service}")
         return grpc.secure_channel(self.endpoints[service], creds, options=self.channel_options)
@@ -88,7 +89,11 @@ class Channels:
     @property
     def endpoints(self) -> Dict[str, str]:
         if self._endpoints is None:
-            self._endpoints = self._get_endpoints()
+            self._endpoints = {}
+            self._endpoints["iam"] = API_ENDPOINT
+            self._endpoints["compute"] = "compute." + API_ENDPOINT
+            self._endpoints["registry"] = "registry." + API_ENDPOINT
+            self._endpoints["mk8s"] = "mk8s." + API_ENDPOINT
             for id_, address in self._config_endpoints.items():
                 logger.debug("Override service %s, endpoint %s", id_, address)
                 if id_ == "iam":
@@ -99,11 +104,6 @@ class Channels:
                 self._endpoints[id_] = address
         return self._endpoints
 
-    def _get_endpoints(self) -> Dict[str, str]:
-        unauthenticated_channel = grpc.secure_channel(self._endpoint, self._channel_creds, options=self.channel_options)
-        endpoint_service = ApiEndpointServiceStub(unauthenticated_channel)
-        resp = endpoint_service.List(ListApiEndpointsRequest())
-        return {endpoint.id: endpoint.address for endpoint in resp.endpoints}
 
     def _get_creds(self, iam_endpoint: str) -> grpc.ChannelCredentials:
         plugin = _auth_plugin.Credentials(

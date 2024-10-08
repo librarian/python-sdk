@@ -42,7 +42,7 @@ warn_redundant_casts = true
 # mypy per-module options:
 [[tool.mypy.overrides]]
 module = [
-    "yandex.cloud.*",
+    "nebius.*",
 ]
 disallow_untyped_defs = false
 check_untyped_defs = false

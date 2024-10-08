@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 import grpc
 from six.moves.urllib.parse import urlparse
 
-from nebius.iam.v1.token_service_pb2_grpc import IamTokenServiceStub
+from nebius.iam.v1.token_exchange_service_pb2_grpc import TokenExchangeServiceStub
 
 if TYPE_CHECKING:
     from nebius.iam.v1.token_service_pb2 import CreateIamTokenResponse
@@ -42,8 +42,7 @@ class Credentials(grpc.AuthMetadataPlugin):
     def _call(self, context: "grpc.AuthMetadataContext", callback: "grpc.AuthMetadataPluginCallback") -> None:
         u = urlparse(context.service_url)
         if u.path in (
-            "/nebius.iam.v1.IamTokenService",
-            "/nebius.endpoint.ApiEndpointService",
+            "/nebius.iam.v1.TokenService",
         ):
             callback(tuple(), None)
             return
@@ -61,7 +60,7 @@ class Credentials(grpc.AuthMetadataPlugin):
 
             get_token_request = getattr(self.__token_requester, "get_token_request", None)
             if callable(get_token_request):
-                token_future = IamTokenServiceStub(self._channel).Create.future(get_token_request())
+                token_future = TokenExchangeServiceStub(self._channel).Exchange.future(get_token_request())
                 token_future.add_done_callback(self.create_done_callback(callback))
                 return
 
@@ -83,7 +82,7 @@ class Credentials(grpc.AuthMetadataPlugin):
         metadata = (("authorization", f"Bearer {self._cached_iam_token}"),)
         return metadata
 
-    def _save_token(self, resp: "CreateIamTokenResponse") -> None:
+    def _save_token(self, resp: "CreateTokenResponse") -> None:
         self._cached_iam_token = resp.iam_token
         self._iam_token_timestamp = datetime.now()
 

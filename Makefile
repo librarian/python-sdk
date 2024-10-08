@@ -50,8 +50,9 @@ proto:  ## regenerate code from protobuf
         --grpc_python_out=. \
         --mypy_grpc_out=. \
         `find api/ -name '*.proto'`
+	cp -R api/buf ./
 	find nebius -type d -exec touch {}/__init__.py \;
-	touch nebius/py.typed \;
+	touch nebius/py.typed
 
 help: ## Show help message
 	@IFS=$$'\n' ; \

@@ -1,5 +1,6 @@
 from typing import Dict, Optional
 
+import nebius.iam.v1.token_exchange_service_pb2
 from nebius.iam.v1.token_service_pb2_grpc import IamTokenServiceStub
 from nebiusai._auth_fabric import (
     API_ENDPOINT,
@@ -30,5 +31,5 @@ def get_auth_token(
         return requester.get_token()
 
     sdk = SDK()
-    client = sdk.client(IamTokenServiceStub)
+    client = sdk.client(nebius.iam.v1.token_exchange_service_pb2, IamTokenServiceStub)
     return client.Create(requester.get_token_request()).iam_token

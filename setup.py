@@ -8,7 +8,7 @@ with open("README.md") as file:
     README = file.read()
 
 setup(
-    name="nebius",
+    name="nebiusai",
     version=__version__,
     description="Nebius SDK",
     url="https://github.com/librarian/nebius-sdk",

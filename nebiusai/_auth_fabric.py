@@ -1,7 +1,7 @@
 import os
 import time
 from datetime import datetime
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, Any
 
 # noinspection PyUnresolvedReferences
 # jwt package depends on cryptography
@@ -9,8 +9,11 @@ import cryptography  # noqa: F401; pylint: disable=unused-import
 import jwt
 import requests
 import six
+import logging
 
-from nebius.iam.v1.token_service_pb2 import CreateIamTokenRequest
+from nebius.iam.v1.token_service_pb2 import ExchangeTokenRequest
+from nebius.annotations_pb2 import api_service_name
+
 
 _MDS_ADDR = "169.254.169.254"
 _MDS_URL = "http://{}/computeMetadata/v1/instance/service-accounts/default/token"
@@ -25,6 +28,22 @@ def set_up_api_endpoint(endpoint: str) -> str:
     global API_ENDPOINT
     API_ENDPOINT = endpoint
     return API_ENDPOINT
+
+def _get_api_service_url(service_ctor: Any) -> str:
+    if not hasattr(service_ctor, "DESCRIPTOR"):
+        logging.info("Service %s has no descriptor", name)
+        return API_ENDPOINT
+
+    name = service_ctor.DESCRIPTOR.services_by_name.keys()[0]
+    logging.info("Service %s has descriptor", name)
+
+    simple_prefix = service_ctor.DESCRIPTOR.package.split(".")[1]
+    endpoint = simple_prefix + "." + API_ENDPOINT
+    service_prefix = service_ctor.DESCRIPTOR.services_by_name[name].GetOptions().Extensions[api_service_name]
+    if service_prefix:
+        logging.info("Service %s has prefix %s", name, service_prefix)
+        endpoint =  service_prefix + "." + API_ENDPOINT
+    return endpoint
 
 
 def __validate_service_account_key(sa_key: Optional[dict]) -> bool:
@@ -73,8 +92,8 @@ class TokenAuth:
     def __init__(self, token: str):
         self.__oauth_token = token
 
-    def get_token_request(self) -> "CreateIamTokenRequest":
-        return CreateIamTokenRequest(oauth_token=self.__oauth_token)
+    def get_token_request(self) -> "ExchangeTokenRequest":
+        return ExchangeTokenRequest(oauth_token=self.__oauth_token)
 
 
 class ServiceAccountAuth:
@@ -84,8 +103,8 @@ class ServiceAccountAuth:
         self.__sa_key = sa_key
         self._endpoint = endpoint if endpoint is not None else API_ENDPOINT
 
-    def get_token_request(self) -> "CreateIamTokenRequest":
-        return CreateIamTokenRequest(jwt=self.__prepare_request(self._endpoint))
+    def get_token_request(self) -> "ExchangeTokenRequest":
+        return ExchangeTokenRequest(jwt=self.__prepare_request(self._endpoint))
 
     def __prepare_request(self, endpoint: str) -> str:
         now = time.time()

@@ -63,7 +63,7 @@ def get_operation_result(
     operation_result: OperationResult[ResponseType, MetaType] = OperationResult(operation)
     created_at = datetime.fromtimestamp(operation.created_at.seconds)
     message = (
-        "Running Yandex.Cloud operation. ID: {id}. "
+        "Running operation. ID: {id}. "
         "Description: {description}. Created at: {created_at}. "
         "Created by: {created_by}."
     )
@@ -84,7 +84,7 @@ def get_operation_result(
         return OperationError(message="Unexpected operation result", operation_result=OperationResult(operation))
     if result.error and result.error.code:
         error_message = (
-            "Error Yandex.Cloud operation. ID: {id}. Error code: {code}. Details: {details}. Message: {message}."
+            "Error operation. ID: {id}. Error code: {code}. Details: {details}. Message: {message}."
         )
         error_message = error_message.format(
             id=result.id,
@@ -95,7 +95,7 @@ def get_operation_result(
         logger.error(error_message)
         raise OperationError(message=error_message, operation_result=OperationResult(operation))
 
-    log_message = f"Done Yandex.Cloud operation. ID: {operation.id}."
+    log_message = f"Done operation. ID: {operation.id}."
     if response_type and response_type is not Empty:
         unpacked_response = response_type()
         result.response.Unpack(unpacked_response)
