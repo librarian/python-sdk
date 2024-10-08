@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
-
+import logging
 import grpc
 from six.moves.urllib.parse import urlparse
 
@@ -29,8 +29,8 @@ class Credentials(grpc.AuthMetadataPlugin):
         self.__token_requester = token_requester
         self._lazy_channel = lazy_channel
         self._channel: Optional[grpc.Channel] = None
-        self._cached_iam_token: str = ""
-        self._iam_token_timestamp: Optional[datetime] = None
+        self._cached_access_token: str = ""
+        self._access_token_timestamp: Optional[datetime] = None
 
     def __call__(self, context: "grpc.AuthMetadataContext", callback: "grpc.AuthMetadataPluginCallback") -> None:
         try:
@@ -41,9 +41,11 @@ class Credentials(grpc.AuthMetadataPlugin):
 
     def _call(self, context: "grpc.AuthMetadataContext", callback: "grpc.AuthMetadataPluginCallback") -> None:
         u = urlparse(context.service_url)
+        logging.info("Service URL: %s", u)
         if u.path in (
-            "/nebius.iam.v1.TokenService",
+            "/nebius.iam.v1.TokenExchangeService",
         ):
+            logging.info("Skipping auth for IAM service")
             callback(tuple(), None)
             return
 
@@ -52,14 +54,17 @@ class Credentials(grpc.AuthMetadataPlugin):
 
         if not self._fresh():
             get_token = getattr(self.__token_requester, "get_token", None)
+            logging.info("Getting token: %s", get_token)
             if callable(get_token):
-                self._cached_iam_token = get_token()
-                self._iam_token_timestamp = datetime.now()
+                logging.info("Getting token (callable get_token): %s", get_token)
+                self._cached_access_token = get_token()
+                self._access_token_timestamp = datetime.now()
                 callback(self._metadata(), None)
                 return
 
             get_token_request = getattr(self.__token_requester, "get_token_request", None)
             if callable(get_token_request):
+                logging.info("Getting token request (callable get_token_request): %s", get_token_request)
                 token_future = TokenExchangeServiceStub(self._channel).Exchange.future(get_token_request())
                 token_future.add_done_callback(self.create_done_callback(callback))
                 return
@@ -79,17 +84,17 @@ class Credentials(grpc.AuthMetadataPlugin):
         return done_callback
 
     def _metadata(self) -> Tuple[Tuple[str, str]]:
-        metadata = (("authorization", f"Bearer {self._cached_iam_token}"),)
+        metadata = (("authorization", f"Bearer {self._cached_access_token}"),)
         return metadata
 
     def _save_token(self, resp: "CreateTokenResponse") -> None:
-        self._cached_iam_token = resp.iam_token
-        self._iam_token_timestamp = datetime.now()
+        self._cached_access_token = resp.access_token
+        self._access_token_timestamp = datetime.now()
 
     def _fresh(self) -> bool:
-        if self._cached_iam_token == "":
+        if self._cached_access_token == "":
             return False
-        if self._iam_token_timestamp is None:
+        if self._access_token_timestamp is None:
             return False
-        diff = datetime.now() - self._iam_token_timestamp
+        diff = datetime.now() - self._access_token_timestamp
         return diff.total_seconds() < TIMEOUT_SECONDS

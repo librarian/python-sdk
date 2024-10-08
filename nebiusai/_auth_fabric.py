@@ -104,25 +104,30 @@ class ServiceAccountAuth:
         self._endpoint = endpoint if endpoint is not None else API_ENDPOINT
 
     def get_token_request(self) -> "ExchangeTokenRequest":
-        return ExchangeTokenRequest(jwt=self.__prepare_request(self._endpoint))
+        return ExchangeTokenRequest(
+            grant_type="urn:ietf:params:oauth:grant-type:token-exchange",
+            requested_token_type="urn:ietf:params:oauth:token-type:access_token",
+            subject_token=self.__prepare_request(self._endpoint),
+            subject_token_type="urn:ietf:params:oauth:token-type:jwt",
+        )
 
     def __prepare_request(self, endpoint: str) -> str:
         now = time.time()
         now_utc = datetime.utcfromtimestamp(now)
         exp_utc = datetime.utcfromtimestamp(now + self.__SECONDS_IN_HOUR)
-        url = f"https://iam.{endpoint}/iam/v1/tokens"
         payload = {
             "iss": self.__sa_key["service_account_id"],
-            "aud": url,
-            "iat": now_utc,
+            "sub": self.__sa_key["service_account_id"],
             "exp": exp_utc,
         }
 
         headers = {
             "typ": "JWT",
-            "alg": "PS256",
+            "alg": "RS256",
             "kid": self.__sa_key["id"],
         }
+        logging.info("Service Account Auth: %s", payload)
+        logging.info("Service Account Auth: %s", headers)
 
         return jwt.encode(payload, self.__sa_key["private_key"], algorithm="PS256", headers=headers)
 
