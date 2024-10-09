@@ -2,44 +2,42 @@
 import argparse
 import json
 import logging
+import os
 
 import grpc
 
-import yandexcloud
-from yandex.cloud.compute.v1.image_service_pb2 import GetImageLatestByFamilyRequest
-from yandex.cloud.compute.v1.image_service_pb2_grpc import ImageServiceStub
-from yandex.cloud.compute.v1.instance_pb2 import IPV4, Instance
-from yandex.cloud.compute.v1.instance_service_pb2 import (
-    AttachedDiskSpec,
-    CreateInstanceMetadata,
+import nebiusai
+import nebius.compute.v1.image_service_pb2 as image_service_pb2
+import nebius.compute.v1.instance_service_pb2 as instance_service_pb2
+from nebius.compute.v1.image_service_pb2 import GetImageLatestByFamilyRequest
+from nebius.compute.v1.image_service_pb2_grpc import ImageServiceStub
+from nebius.compute.v1.instance_pb2 import Instance, AttachedDiskSpec,ResourcesSpec
+
+from nebius.compute.v1.instance_service_pb2 import (
     CreateInstanceRequest,
-    DeleteInstanceMetadata,
     DeleteInstanceRequest,
-    NetworkInterfaceSpec,
-    OneToOneNatSpec,
-    PrimaryAddressSpec,
-    ResourcesSpec,
 )
-from yandex.cloud.compute.v1.instance_service_pb2_grpc import InstanceServiceStub
+from nebius.common.v1.metadata_pb2 import ResourceMetadata
+from nebius.compute.v1.instance_service_pb2_grpc import InstanceServiceStub
+from nebius.compute.v1.network_interface_pb2 import NetworkInterfaceSpec, PublicIPAddress
 
 
-def create_instance(sdk, folder_id, zone, name, subnet_id):
-    image_service = sdk.client(ImageServiceStub)
+def create_instance(sdk, parent_id,  name, subnet_id):
+    image_service = sdk.client(image_service_pb2, ImageServiceStub)
     source_image = image_service.GetLatestByFamily(
-        GetImageLatestByFamilyRequest(folder_id="standard-images", family="debian-9")
+        GetImageLatestByFamilyRequest(parent_id="standard-images", image_family="ubuntu-2204")
     )
-    subnet_id = subnet_id or sdk.helpers.get_subnet(folder_id, zone)
-    instance_service = sdk.client(InstanceServiceStub)
+    subnet_id = subnet_id or sdk.helpers.get_subnet(parent_id)
+    instance_service = sdk.client(instance_service_pb2, InstanceServiceStub)
     operation = instance_service.Create(
         CreateInstanceRequest(
-            folder_id=folder_id,
+            parent_id=parent_id,
             name=name,
             resources_spec=ResourcesSpec(
                 memory=2 * 2**30,
                 cores=2,
                 core_fraction=0,
             ),
-            zone_id=zone,
             platform_id="standard-v1",
             boot_disk_spec=AttachedDiskSpec(
                 auto_delete=True,
@@ -52,11 +50,8 @@ def create_instance(sdk, folder_id, zone, name, subnet_id):
             network_interface_specs=[
                 NetworkInterfaceSpec(
                     subnet_id=subnet_id,
-                    primary_v4_address_spec=PrimaryAddressSpec(
-                        one_to_one_nat_spec=OneToOneNatSpec(
-                            ip_version=IPV4,
-                        )
-                    ),
+                    public_ip_address=PublicIPAddress(static=False)
+
                 ),
             ],
             metadata={
@@ -69,29 +64,34 @@ def create_instance(sdk, folder_id, zone, name, subnet_id):
 
 
 def delete_instance(sdk, instance_id):
-    instance_service = sdk.client(InstanceServiceStub)
+    instance_service = sdk.client(instance_service_pb2, InstanceServiceStub)
     return instance_service.Delete(DeleteInstanceRequest(instance_id=instance_id))
 
 
 def main():
     logging.basicConfig(level=logging.INFO)
     arguments = parse_args()
-    interceptor = yandexcloud.RetryInterceptor(max_retry_count=5, retriable_codes=[grpc.StatusCode.UNAVAILABLE])
+    interceptor = nebiusai.RetryInterceptor(max_retry_count=5, retriable_codes=[grpc.StatusCode.UNAVAILABLE])
     if arguments.token:
-        sdk = yandexcloud.SDK(interceptor=interceptor, token=arguments.token)
+        sdk = nebiusai.SDK(interceptor=interceptor, token=arguments.token)
+    elif arguments.metadata_addr:
+        sdk = nebiusai.SDK(interceptor=interceptor, metadata_addr=arguments.metadata_addr)
+    elif arguments.iam_token:
+        sdk = nebiusai.SDK(interceptor=interceptor, iam_token=os.getenv(arguments.iam_token,))
     else:
         with open(arguments.sa_json_path) as infile:
-            sdk = yandexcloud.SDK(interceptor=interceptor, service_account_key=json.load(infile))
+            sdk = nebiusai.SDK(interceptor=interceptor, service_account_key=json.load(infile))
 
     fill_missing_arguments(sdk, arguments)
 
     instance_id = None
     try:
-        operation = create_instance(sdk, arguments.folder_id, arguments.zone, arguments.name, arguments.subnet_id)
+        operation = create_instance(sdk, arguments.parent_id, arguments.name, arguments.subnet_id)
         operation_result = sdk.wait_operation_and_get_result(
+            instance_service_pb2,
             operation,
             response_type=Instance,
-            meta_type=CreateInstanceMetadata,
+            meta_type=ResourceMetadata,
         )
 
         instance_id = operation_result.response.id
@@ -101,17 +101,17 @@ def main():
             logging.info("Deleting instance {}".format(instance_id))
             operation = delete_instance(sdk, instance_id)
             sdk.wait_operation_and_get_result(
+                instance_service_pb2,
                 operation,
-                meta_type=DeleteInstanceMetadata,
+                meta_type=ResourceMetadata,
             )
 
 
 def fill_missing_arguments(sdk, arguments):
     if not arguments.subnet_id:
-        network_id = sdk.helpers.find_network_id(folder_id=arguments.folder_id)
+        network_id = sdk.helpers.find_network_id(parent_id=arguments.parent_id)
         arguments.subnet_id = sdk.helpers.find_subnet_id(
-            folder_id=arguments.folder_id,
-            zone_id=arguments.zone,
+            parent_id=arguments.parent_id,
             network_id=network_id,
         )
 
@@ -126,8 +126,9 @@ def parse_args():
         "yc iam key create --output sa.json --service-account-id <id>",
     )
     auth.add_argument("--token", help="OAuth token")
-    parser.add_argument("--folder-id", help="Your Yandex.Cloud folder id", required=True)
-    parser.add_argument("--zone", default="ru-central1-b", help="Compute Engine zone to deploy to.")
+    auth.add_argument("--metadata-addr", help="Metadata address")
+    auth.add_argument("--iam-token", help="IAM token")
+    parser.add_argument("--parent-id", help="Your parent id", required=True)
     parser.add_argument("--name", default="demo-instance", help="New instance name.")
     parser.add_argument("--subnet-id", help="Subnet of the instance")
 

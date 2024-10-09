@@ -100,18 +100,20 @@ class SDK:
 
     def wait_operation_and_get_result(
         self,
+        service_ctor: Type,
         operation: "Operation",
         response_type: Optional[Type["ResponseType"]] = None,
         meta_type: Optional[Type["MetaType"]] = None,
         timeout: Optional[float] = None,
         logger: Optional["logging.Logger"] = None,
     ) -> Union["OperationResult[ResponseType, MetaType]", "OperationError"]:
-        return _operation_waiter.get_operation_result(self, operation, response_type, meta_type, timeout, logger)
+        return _operation_waiter.get_operation_result(self, service_ctor, operation, response_type, meta_type, timeout, logger)
 
     def create_operation_and_get_result(
         self,
         request: Type["RequestType"],
         service: Any,
+        service_ctor: Type,
         stub: Any,
         method_name: str,
         response_type: Optional[Type["ResponseType"]] = None,
@@ -122,6 +124,7 @@ class SDK:
         operation = getattr(self.client(service, stub), method_name)(request)
         return self.wait_operation_and_get_result(
             operation,
+            service_ctor=service_ctor,
             response_type=response_type,
             meta_type=meta_type,
             timeout=timeout,

@@ -66,7 +66,7 @@ Check `examples` directory for more examples.
 |------------------------------------------------------------------------|--------------------------|
 
 | nebius.cloud.compute                                                   | compute                  |
-| nebius.cloud.registry                                         | container-registry       |
+| nebius.cloud.registry                                                  | container-registry       |
 | nebius.cloud.iam                                                       | iam                      |
 | nebius.cloud.storage                                                   | storage-api              |
 | nebius.cloud.vpc                                                       | vpc                      |
@@ -74,24 +74,26 @@ Check `examples` directory for more examples.
 
 #### Override in client
 ```python
-from nebiusai.cloud.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
+import nebius.vpc.v1.network_service_pb2 as network_service
+from nebius.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
 from nebiusai import SDK
 
 sdk = SDK(iam_token="t1.9eu...")
 new_network_client_endpoint = "example.new.vpc.very.new:50051"
 insecure = False # by default is False, but if server does not support verification can be set to True
-network_client = sdk.client(NetworkServiceStub, endpoint=new_network_client_endpoint, insecure=False)
+network_client = sdk.client(network_service NetworkServiceStub, endpoint=new_network_client_endpoint, insecure=False)
 ```
 
 #### Override in sdk config
 To override endpoints provide dict in format {alias : new-endpoint}
 ```python
+import nebius.vpc.v1.network_service_pb2 as network_service
 from nebius.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
 from nebiusai import SDK
 new_network_client_endpoint = "example.new.vpc.very.new:50051"
 sdk = SDK(iam_token="t1.9eu...", endpoints={"vpc": new_network_client_endpoint})
 insecure = False # by default is False, but if server does not support verification can be set to True
-network_client = sdk.client(NetworkServiceStub, insecure=False)
+network_client = sdk.client(network_service, NetworkServiceStub, insecure=False)
 ```
 
 Notice: if both overrides are used for same endpoint, override by client has priority

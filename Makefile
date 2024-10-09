@@ -50,9 +50,13 @@ proto:  ## regenerate code from protobuf
         --grpc_python_out=. \
         --mypy_grpc_out=. \
         `find api/ -name '*.proto'`
-	cp -R api/buf ./
+	cp -R api/buf ./nebius/
 	find nebius -type d -exec touch {}/__init__.py \;
 	touch nebius/py.typed
+
+	echo 'import sys' > nebius/__init__.py
+	echo 'import os' >> nebius/__init__.py
+	echo 'sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))' >> nebius/__init__.py
 
 help: ## Show help message
 	@IFS=$$'\n' ; \

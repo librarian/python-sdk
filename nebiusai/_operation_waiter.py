@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from nebiusai._sdk import SDK
 
 
-def operation_waiter(sdk: "SDK", operation_id: str, timeout: Optional[float]) -> "OperationWaiter":
+def operation_waiter(sdk: "SDK", service_ctor: Type, operation_id: str, timeout: Optional[float]) -> "OperationWaiter":
     retriable_codes = (
         grpc.StatusCode.UNAVAILABLE,
         grpc.StatusCode.RESOURCE_EXHAUSTED,
@@ -36,14 +36,15 @@ def operation_waiter(sdk: "SDK", operation_id: str, timeout: Optional[float]) ->
         retriable_codes=retriable_codes,
     )
     operation_service = sdk.client(
+        service_ctor,
         OperationServiceStub,
         interceptor=retry_interceptor,
     )
     return OperationWaiter(operation_id, operation_service, timeout)
 
 
-def wait_for_operation(sdk: "SDK", operation_id: str, timeout: Optional[float]) -> Optional["Operation"]:
-    waiter = operation_waiter(sdk, operation_id, timeout)
+def wait_for_operation(sdk: "SDK", service_ctor: Type, operation_id: str, timeout: Optional[float]) -> Optional["Operation"]:
+    waiter = operation_waiter(sdk, service_ctor, operation_id, timeout)
     for _ in waiter:
         time.sleep(1)
     return waiter.operation
@@ -51,6 +52,7 @@ def wait_for_operation(sdk: "SDK", operation_id: str, timeout: Optional[float]) 
 
 def get_operation_result(
     sdk: "SDK",
+    service_ctor: Type,
     operation: "Operation",
     response_type: Optional[Type["ResponseType"]] = None,
     meta_type: Optional[Type["MetaType"]] = None,
@@ -79,7 +81,7 @@ def get_operation_result(
         operation_result.meta = unpacked_meta
         message += f" Meta: {unpacked_meta}."
     logger.info(message)
-    result = wait_for_operation(sdk, operation.id, timeout=timeout)
+    result = wait_for_operation(sdk, service_ctor, operation.id, timeout=timeout)
     if result is None:
         return OperationError(message="Unexpected operation result", operation_result=OperationResult(operation))
     if result.error and result.error.code:
