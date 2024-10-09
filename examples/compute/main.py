@@ -9,64 +9,114 @@ import grpc
 import nebiusai
 import nebius.compute.v1.image_service_pb2 as image_service_pb2
 import nebius.compute.v1.instance_service_pb2 as instance_service_pb2
+import nebius.compute.v1.disk_service_pb2 as disk_service_pb2
 from nebius.compute.v1.image_service_pb2 import GetImageLatestByFamilyRequest
 from nebius.compute.v1.image_service_pb2_grpc import ImageServiceStub
-from nebius.compute.v1.instance_pb2 import Instance, AttachedDiskSpec,ResourcesSpec
+from nebius.compute.v1.instance_pb2 import Instance, AttachedDiskSpec,ResourcesSpec, ExistingDisk
 
 from nebius.compute.v1.instance_service_pb2 import (
     CreateInstanceRequest,
     DeleteInstanceRequest,
 )
 from nebius.common.v1.metadata_pb2 import ResourceMetadata
+from nebius.compute.v1.disk_service_pb2 import CreateDiskRequest
+from nebius.compute.v1.disk_pb2 import DiskSpec, Disk
+from nebius.compute.v1.disk_service_pb2_grpc import DiskServiceStub
 from nebius.compute.v1.instance_service_pb2_grpc import InstanceServiceStub
 from nebius.compute.v1.network_interface_pb2 import NetworkInterfaceSpec, PublicIPAddress
 
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s: %(levelname)s: %(message)s"
+)
 
-def create_instance(sdk, parent_id,  name, subnet_id):
-    image_service = sdk.client(image_service_pb2, ImageServiceStub)
-    source_image = image_service.GetLatestByFamily(
-        GetImageLatestByFamilyRequest(parent_id="standard-images", image_family="ubuntu-2204")
-    )
-    subnet_id = subnet_id or sdk.helpers.get_subnet(parent_id)
-    instance_service = sdk.client(instance_service_pb2, InstanceServiceStub)
-    operation = instance_service.Create(
-        CreateInstanceRequest(
+logger = logging.getLogger(__name__)
+TIMEOUT = 60
+
+def create_disk(sdk: nebiusai.SDK, parent_id, source_image_id):
+    logging.info("Creating disk")
+    request = CreateDiskRequest(
+        metadata=ResourceMetadata(
             parent_id=parent_id,
-            name=name,
-            resources_spec=ResourcesSpec(
-                memory=2 * 2**30,
-                cores=2,
-                core_fraction=0,
-            ),
-            platform_id="standard-v1",
-            boot_disk_spec=AttachedDiskSpec(
-                auto_delete=True,
-                disk_spec=AttachedDiskSpec.DiskSpec(
-                    type_id="network-hdd",
-                    size=20 * 2**30,
-                    image_id=source_image.id,
-                ),
-            ),
-            network_interface_specs=[
-                NetworkInterfaceSpec(
-                    subnet_id=subnet_id,
-                    public_ip_address=PublicIPAddress(static=False)
-
-                ),
-            ],
-            metadata={
-                "metadata-key": "metadata-value",
-            },
+            name="disk"
+        ),
+        spec=DiskSpec(
+            type=DiskSpec.DiskType.NETWORK_SSD_NON_REPLICATED,
+            size_gibibytes=93,
+            source_image_id=source_image_id
         )
     )
+    result = sdk.create_operation_and_get_result(
+        request=request,
+        service=DiskServiceStub,
+        service_ctor=disk_service_pb2,
+        meta_type=ResourceMetadata,
+        method_name="Create",
+        response_type=Disk,
+        logger=logger,
+        timeout=TIMEOUT
+    )
+    logging.info("Disk created: %s", result.response.id)
+
+    return result.response.id
+
+def create_instance(sdk, parent_id,  name, subnet_id):
+    logging.info("Creating instance")
+
+    image_service = sdk.client(image_service_pb2, ImageServiceStub)
+    source_image_id = image_service.GetLatestByFamily(
+        GetImageLatestByFamilyRequest(parent_id="project-e00public-images", image_family="ubuntu22.04-driverless")
+    )
+    logging.info("source_image_id: %s", source_image_id.metadata.id)
+    disk_id = create_disk(sdk, parent_id, source_image_id.metadata.id)
+    subnet_id = subnet_id or sdk.helpers.get_subnet(parent_id)
+    request = CreateInstanceRequest(
+        metadata=ResourceMetadata(
+            parent_id=parent_id,
+            name=name,
+        ),
+        resources_spec=ResourcesSpec(
+            platform="cpu-e2",
+            preset="80vcpu-320gb"
+
+        ),
+        boot_disk=AttachedDiskSpec(
+            attach_mode=AttachedDiskSpec.AttachMode.ATTACH_MODE_READ_WRITE,
+            existing_disk=ExistingDisk(id=disk_id),
+            device_id="boot"
+        ),
+        network_interface_specs=[
+            NetworkInterfaceSpec(
+                subnet_id=subnet_id,
+                public_ip_address=PublicIPAddress(static=False)
+            ),
+        ],
+
+    )
+    result = sdk.create_operation_and_get_result(
+        request=request,
+        service=InstanceServiceStub,
+        service_ctor=instance_service_pb2,
+        method_name="Create",
+        response_type=Instance,
+        meta_type=ResourceMetadata,
+        logger=logger,
+        timeout=TIMEOUT
+    )
+
     logging.info("Creating initiated")
-    return operation
+    return result.response.id
 
 
-def delete_instance(sdk, instance_id):
-    instance_service = sdk.client(instance_service_pb2, InstanceServiceStub)
-    return instance_service.Delete(DeleteInstanceRequest(instance_id=instance_id))
-
+def delete_instance(sdk: nebiusai.SDK, instance_id):
+    request = DeleteInstanceRequest(id=instance_id)
+    return sdk.create_operation_and_get_result(
+        request=request,
+        service=InstanceServiceStub,
+        service_ctor=instance_service_pb2,
+        method_name="Delete",
+        logger=logger,
+        timeout=TIMEOUT
+    )
 
 def main():
     logging.basicConfig(level=logging.INFO)
@@ -86,25 +136,13 @@ def main():
 
     instance_id = None
     try:
-        operation = create_instance(sdk, arguments.parent_id, arguments.name, arguments.subnet_id)
-        operation_result = sdk.wait_operation_and_get_result(
-            instance_service_pb2,
-            operation,
-            response_type=Instance,
-            meta_type=ResourceMetadata,
-        )
-
-        instance_id = operation_result.response.id
+        instance_id = create_instance(sdk, arguments.parent_id, arguments.name, arguments.subnet_id)
 
     finally:
         if instance_id:
             logging.info("Deleting instance {}".format(instance_id))
-            operation = delete_instance(sdk, instance_id)
-            sdk.wait_operation_and_get_result(
-                instance_service_pb2,
-                operation,
-                meta_type=ResourceMetadata,
-            )
+            print(delete_instance(sdk, instance_id))
+
 
 
 def fill_missing_arguments(sdk, arguments):

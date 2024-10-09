@@ -114,14 +114,13 @@ class SDK:
         request: Type["RequestType"],
         service: Any,
         service_ctor: Type,
-        stub: Any,
         method_name: str,
         response_type: Optional[Type["ResponseType"]] = None,
         meta_type: Optional[Type["MetaType"]] = None,
         timeout: Optional[float] = None,
         logger: Optional["logging.Logger"] = None,
     ) -> Union["OperationResult", "OperationError"]:
-        operation = getattr(self.client(service, stub), method_name)(request)
+        operation = getattr(self.client(service_ctor, service), method_name)(request)
         return self.wait_operation_and_get_result(
             operation,
             service_ctor=service_ctor,
