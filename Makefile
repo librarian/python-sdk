@@ -39,7 +39,7 @@ submodule:  ## update submodules
 
 proto:  ## regenerate code from protobuf
 	rm -rf nebius
-	find api -name "v1alpha1" -type d -exec rm -rf {} \;
+	find api -name "v1alpha1" -type d -delete;
 	buf generate buf.build/bufbuild/protovalidate
 	python3 -m grpc_tools.protoc \
         --proto_path=api \
@@ -51,6 +51,8 @@ proto:  ## regenerate code from protobuf
         --mypy_grpc_out=. \
         `find api/ -name '*.proto'`
 	cp -R api/buf ./nebius/
+	rm -rf api/buf
+	cd api; git reset --hard ; cd ../
 	find nebius -type d -exec touch {}/__init__.py \;
 	touch nebius/py.typed
 
