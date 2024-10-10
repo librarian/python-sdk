@@ -47,6 +47,7 @@ def operation_waiter(sdk: "SDK", service_ctor: Type, operation_id: str, timeout:
 def wait_for_operation(sdk: "SDK", service_ctor: Type, operation_id: str, timeout: Optional[float]) -> Optional["Operation"]:
     waiter = operation_waiter(sdk, service_ctor, operation_id, timeout)
     for _ in waiter:
+        logging.info("Waiting for operation %s", operation_id)
         time.sleep(1)
     return waiter.operation
 
@@ -110,8 +111,22 @@ class OperationWaiter:
 
     @property
     def done(self) -> bool:
-        self.__operation = self.__operation_service.Get(GetOperationRequest(id=self.__operation_id))
-        return self.__operation is not None and self.__operation.status.code is not None and self.__operation.finished_at is not None
+        self.__operation: Operation = self.__operation_service.Get(GetOperationRequest(id=self.__operation_id))
+        logging.info("Operation %s", self.__operation.status )
+        logging.info("Operation status: %s", self.__operation.status)
+        logging.info("Operation status: %s", type(self.__operation.status.code))
+        logging.info("Operation finished at: %s", self.__operation.finished_at.seconds)
+        logging.info("Operation created at: %s", self.__operation.created_at)
+        logging.info("Operation created_by: %s", self.__operation.created_by)
+        logging.info("Operation resource_id: %s", self.__operation.resource_id)
+        check_operation = self.__operation is not None
+        check_status = self.__operation.status.code is not None
+        check_finished_at = self.__operation.finished_at.seconds != 0
+        logging.info("Operation condition: %s and %s and %s = %s",
+            check_operation, check_status, check_finished_at, check_operation and check_status and check_finished_at
+        )
+
+        return check_operation and check_status and check_finished_at
 
     def __iter__(self) -> "OperationWaiter":
         return self

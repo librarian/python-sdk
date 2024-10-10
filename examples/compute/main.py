@@ -139,7 +139,7 @@ def create_instance(sdk: nebiusai.SDK, parent_id,  name, subnet_id):
     )
     INSTANCE_ID = result
 
-    logging.info("Creating finished", result)
+    logging.info("Creating finished %s", result)
     return result, disk_id
 
 
@@ -187,6 +187,8 @@ def main():
         instance_id, disk_id = create_instance(sdk, arguments.parent_id, arguments.name, arguments.subnet_id)
 
     finally:
+        import time
+        time.sleep(5)
         if INSTANCE_ID:
             logging.info("Deleting instance {}".format(INSTANCE_ID))
             logging.info("Deleted instance_id %s",delete_instance(sdk, INSTANCE_ID))
