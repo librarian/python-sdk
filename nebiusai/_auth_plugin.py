@@ -45,7 +45,7 @@ class Credentials(grpc.AuthMetadataPlugin):
         if u.path in (
             "/nebius.iam.v1.TokenExchangeService",
         ):
-            logging.info("Skipping auth for IAM service")
+            logging.debug("Skipping auth for IAM service")
             callback(tuple(), None)
             return
 
@@ -54,9 +54,9 @@ class Credentials(grpc.AuthMetadataPlugin):
 
         if not self._fresh():
             get_token = getattr(self.__token_requester, "get_token", None)
-            logging.info("Getting token: %s", get_token)
+            logging.debug("Getting token: %s", get_token)
             if callable(get_token):
-                logging.info("Getting token (callable get_token): %s", get_token)
+                logging.debug("Getting token (callable get_token): %s", get_token)
                 self._cached_access_token = get_token()
                 self._access_token_timestamp = datetime.now()
                 callback(self._metadata(), None)
@@ -64,7 +64,7 @@ class Credentials(grpc.AuthMetadataPlugin):
 
             get_token_request = getattr(self.__token_requester, "get_token_request", None)
             if callable(get_token_request):
-                logging.info("Getting token request (callable get_token_request): %s", get_token_request)
+                logging.debug("Getting token request (callable get_token_request): %s", get_token_request)
                 token_future = TokenExchangeServiceStub(self._channel).Exchange.future(get_token_request())
                 token_future.add_done_callback(self.create_done_callback(callback))
                 return

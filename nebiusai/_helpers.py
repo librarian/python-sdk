@@ -9,6 +9,9 @@ from nebius.vpc.v1.network_service_pb2 import ListNetworksRequest
 from nebius.vpc.v1.network_service_pb2_grpc import NetworkServiceStub
 from nebius.vpc.v1.subnet_service_pb2 import ListSubnetsRequest
 from nebius.vpc.v1.subnet_service_pb2_grpc import SubnetServiceStub
+import nebius.vpc.v1.network_service_pb2 as network_service_pb2
+import nebius.vpc.v1.subnet_service_pb2 as subnet_service_pb2
+import nebius.iam.v1.service_account_service_pb2 as service_account_service_pb2
 
 if TYPE_CHECKING:
     from nebiusai._sdk import SDK
@@ -25,8 +28,8 @@ class Helpers:
         :param parent_id: ID of the folder
         :return ID of the service account
         """
-        service = self.sdk.client(ServiceAccountServiceStub)
-        service_accounts = service.List(ListServiceAccountRequest(parent_id=parent_id)).service_accounts
+        service = self.sdk.client(service_account_service_pb2, ServiceAccountServiceStub)
+        service_accounts = service.List(ListServiceAccountRequest(parent_id=parent_id)).items
         if len(service_accounts) == 1:
             return service_accounts[0].id
         if len(service_accounts) == 0:
@@ -40,14 +43,14 @@ class Helpers:
         :param parent_id: ID of the folder
         :return ID of the network
         """
-        networks = self.sdk.client(NetworkServiceStub).List(ListNetworksRequest(parent_id=parent_id)).networks
+        networks = self.sdk.client(network_service_pb2, NetworkServiceStub).List(ListNetworksRequest(parent_id=parent_id)).items
         if not networks:
             raise RuntimeError(f"No networks in folder: {parent_id}")
         if len(networks) > 1:
             raise RuntimeError("There are more than one network in folder {parent_id}, please specify it")
-        return networks[0].id
+        return networks[0].metadata.id
 
-    def find_subnet_id(self, parent_id: str, zone_id: str, network_id: Optional[str] = None) -> str:
+    def find_subnet_id(self, parent_id: str, network_id: Optional[str] = None) -> str:
         """
         Get ID of the subnetwork of specified network in specified availability zone
 
@@ -56,14 +59,14 @@ class Helpers:
         :param network_id: ID of the network
         :return ID of the subnetwork
         """
-        subnet_service = self.sdk.client(SubnetServiceStub)
-        subnets = subnet_service.List(ListSubnetsRequest(parent_id=parent_id)).subnets
+        subnet_service = self.sdk.client(subnet_service_pb2, SubnetServiceStub)
+        subnets = subnet_service.List(ListSubnetsRequest(parent_id=parent_id)).items
         if network_id:
-            applicable = [s for s in subnets if s.zone_id == zone_id and s.network_id == network_id]
+            applicable = [s for s in subnets if s.spec.network_id == network_id]
         else:
-            applicable = [s for s in subnets if s.zone_id == zone_id]
+            applicable = subnets
         if len(applicable) == 1:
-            return applicable[0].id
+            return applicable[0].metadata.id
         if len(applicable) == 0:
-            raise RuntimeError(f"There are no subnets in {zone_id} zone, please create it.")
-        raise RuntimeError(f"There are more than one subnet in {zone_id} zone, please specify it")
+            raise RuntimeError(f"There are no subnets, please create it.")
+        raise RuntimeError(f"There are more than one subnet, please specify it")

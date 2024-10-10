@@ -120,9 +120,10 @@ class SDK:
         timeout: Optional[float] = None,
         logger: Optional["logging.Logger"] = None,
     ) -> Union["OperationResult", "OperationError"]:
+        logger.info("Creating operation for service %s, method %s and request %s", service, method_name, request)
         operation = getattr(self.client(service_ctor, service), method_name)(request)
         return self.wait_operation_and_get_result(
-            operation,
+            operation=operation,
             service_ctor=service_ctor,
             response_type=response_type,
             meta_type=meta_type,

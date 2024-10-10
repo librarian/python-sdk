@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional, Type, Union
 
 import grpc
 from google.protobuf.empty_pb2 import Empty
+from google.rpc.code_pb2 import Code
 
 from nebius.common.v1.operation_service_pb2 import GetOperationRequest
 from nebius.common.v1.operation_service_pb2_grpc import OperationServiceStub
@@ -62,49 +63,38 @@ def get_operation_result(
     if not logger:
         logger = logging.getLogger()
         logger.addHandler(logging.NullHandler())
-    operation_result: OperationResult[ResponseType, MetaType] = OperationResult(operation)
     created_at = datetime.fromtimestamp(operation.created_at.seconds)
     message = (
         "Running operation. ID: {id}. "
-        "Description: {description}. Created at: {created_at}. "
-        "Created by: {created_by}."
+        "Created at: {created_at}. "
+        "Resource id: {resource_id}. "
     )
     message = message.format(
         id=operation.id,
-        description=operation.description,
         created_at=created_at,
-        created_by=operation.created_by,
+        resource_id=operation.resource_id,
     )
-    if meta_type and meta_type is not Empty:
-        unpacked_meta = meta_type()
-        operation.metadata.Unpack(unpacked_meta)
-        operation_result.meta = unpacked_meta
-        message += f" Meta: {unpacked_meta}."
     logger.info(message)
     result = wait_for_operation(sdk, service_ctor, operation.id, timeout=timeout)
     if result is None:
         return OperationError(message="Unexpected operation result", operation_result=OperationResult(operation))
-    if result.error and result.error.code:
+    if result.status.code != Code.OK:
+        logger.info("result %s", result)
         error_message = (
-            "Error operation. ID: {id}. Error code: {code}. Details: {details}. Message: {message}."
+            "Error operation. ID: {id}. Error code: {code}. Details: {details}."
         )
         error_message = error_message.format(
             id=result.id,
-            code=result.error.code,
-            details=result.error.details,
-            message=result.error.message,
+            code=result.status.code,
+            details=result.status.details,
         )
         logger.error(error_message)
         raise OperationError(message=error_message, operation_result=OperationResult(operation))
 
     log_message = f"Done operation. ID: {operation.id}."
-    if response_type and response_type is not Empty:
-        unpacked_response = response_type()
-        result.response.Unpack(unpacked_response)
-        operation_result.response = unpacked_response
-        log_message += f" Response: {unpacked_response}."
+
     logger.info(log_message)
-    return operation_result
+    return result.resource_id
 
 
 class OperationWaiter:
@@ -120,8 +110,8 @@ class OperationWaiter:
 
     @property
     def done(self) -> bool:
-        self.__operation = self.__operation_service.Get(GetOperationRequest(operation_id=self.__operation_id))
-        return self.__operation is not None and self.__operation.done
+        self.__operation = self.__operation_service.Get(GetOperationRequest(id=self.__operation_id))
+        return self.__operation is not None and self.__operation.status.code is not None and self.__operation.finished_at is not None
 
     def __iter__(self) -> "OperationWaiter":
         return self

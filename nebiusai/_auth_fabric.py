@@ -31,18 +31,19 @@ def set_up_api_endpoint(endpoint: str) -> str:
 
 def _get_api_service_url(service_ctor: Any) -> str:
     if not hasattr(service_ctor, "DESCRIPTOR"):
-        logging.info("Service %s has no descriptor", name)
+        logging.debug("Service %s has no descriptor", name)
         return API_ENDPOINT
 
     name = service_ctor.DESCRIPTOR.services_by_name.keys()[0]
-    logging.info("Service %s has descriptor", name)
+    logging.debug("Service %s has descriptor", name)
 
     simple_prefix = service_ctor.DESCRIPTOR.package.split(".")[1]
     endpoint = simple_prefix + "." + API_ENDPOINT
     service_prefix = service_ctor.DESCRIPTOR.services_by_name[name].GetOptions().Extensions[api_service_name]
     if service_prefix:
-        logging.info("Service %s has prefix %s", name, service_prefix)
+        logging.debug("Service %s has prefix %s", name, service_prefix)
         endpoint =  service_prefix + "." + API_ENDPOINT
+    logging.debug("Service %s has endpoint %s", name, endpoint)
     return endpoint
 
 

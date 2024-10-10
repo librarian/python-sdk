@@ -57,10 +57,10 @@ class Channels:
         if endpoint:
             logger.info("Using provided service %s endpoint %s", service, endpoint)
             if insecure:
-                logger.info("Insecure option is ON, no IAM endpoint used for verification")
+                logger.debug("Insecure option is ON, no IAM endpoint used for verification")
                 return grpc.insecure_channel(endpoint, options=self.channel_options)
             iam_endpoint = _get_api_service_url(token_exchange_service_pb2)
-            logger.info("Insecure option is OFF,IAM endpoint %s used for verification", iam_endpoint)
+            logger.debug("Insecure option is OFF,IAM endpoint %s used for verification", iam_endpoint)
             creds: grpc.ChannelCredentials = self._get_creds(iam_endpoint)
             return grpc.secure_channel(endpoint, creds, options=self.channel_options)
         if service not in self._config_endpoints and insecure:
@@ -70,7 +70,7 @@ class Channels:
                 service,
             )
         elif insecure:
-            logger.info("Insecure option is ON, no IAM endpoint used for verification")
+            logger.debug("Insecure option is ON, no IAM endpoint used for verification")
             return grpc.insecure_channel(self.endpoints[service], options=self.channel_options)
 
         logger.info(
