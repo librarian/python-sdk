@@ -4,15 +4,14 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Type, Union
 import grpc
 
 from nebiusai import _channels, _helpers, _operation_waiter
+from nebiusai._auth_fabric import _get_api_service_url
 from nebiusai._backoff import backoff_exponential_with_jitter
 from nebiusai._retry_interceptor import RetryInterceptor
-from nebiusai._auth_fabric import _get_api_service_url
 
 if TYPE_CHECKING:
     import logging
 
     from nebius.common.v1.operation_pb2 import Operation
-    from nebiusai._operation_waiter import OperationWaiter
     from nebiusai.operations import (
         MetaType,
         OperationError,
@@ -95,9 +94,6 @@ class SDK:
             channel = grpc.intercept_channel(channel, self._default_interceptor)
         return stub_ctor(channel)
 
-    def waiter(self, operation_id: str, timeout: Optional[float] = None) -> "OperationWaiter":
-        return _operation_waiter.operation_waiter(self, operation_id, timeout)
-
     def wait_operation_and_get_result(
         self,
         service_ctor: Type,
@@ -121,15 +117,19 @@ class SDK:
         logger: Optional["logging.Logger"] = None,
     ) -> Union["OperationResult", "OperationError"]:
         logger.info("Creating operation for service %s, method %s and request %s", service, method_name, request)
-        operation = getattr(self.client(service_ctor, service), method_name)(request)
-        return self.wait_operation_and_get_result(
-            operation=operation,
-            service_ctor=service_ctor,
-            response_type=response_type,
-            meta_type=meta_type,
-            timeout=timeout,
-            logger=logger,
-        )
+        try:
+            operation = getattr(self.client(service_ctor, service), method_name)(request)
+            result = self.wait_operation_and_get_result(
+                operation=operation,
+                service_ctor=service_ctor,
+                response_type=response_type,
+                meta_type=meta_type,
+                timeout=timeout,
+                logger=logger,
+            )
+            return result
+        except grpc.RpcError as e:
+            raise RuntimeError(f"Failed to create operation: {e.details()}") from None
 
 
 def _service_for_ctor(stub_ctor: Any) -> str:

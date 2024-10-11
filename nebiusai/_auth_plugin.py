@@ -1,13 +1,14 @@
+import logging
 from datetime import datetime
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
-import logging
+
 import grpc
 from six.moves.urllib.parse import urlparse
 
 from nebius.iam.v1.token_exchange_service_pb2_grpc import TokenExchangeServiceStub
 
 if TYPE_CHECKING:
-    from nebius.iam.v1.token_service_pb2 import CreateIamTokenResponse
+    from nebius.iam.v1.token_service_pb2 import CreateTokenResponse
     from nebiusai._auth_fabric import (
         IamTokenAuth,
         MetadataAuth,
@@ -41,7 +42,7 @@ class Credentials(grpc.AuthMetadataPlugin):
 
     def _call(self, context: "grpc.AuthMetadataContext", callback: "grpc.AuthMetadataPluginCallback") -> None:
         u = urlparse(context.service_url)
-        logging.info("Service URL: %s", u)
+        logging.debug("Service URL: %s", u)
         if u.path in (
             "/nebius.iam.v1.TokenExchangeService",
         ):
@@ -97,4 +98,5 @@ class Credentials(grpc.AuthMetadataPlugin):
         if self._access_token_timestamp is None:
             return False
         diff = datetime.now() - self._access_token_timestamp
+        return diff.total_seconds() < TIMEOUT_SECONDS
         return diff.total_seconds() < TIMEOUT_SECONDS

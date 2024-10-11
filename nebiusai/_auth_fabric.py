@@ -1,7 +1,8 @@
+import logging
 import os
 import time
-from datetime import datetime
-from typing import Dict, Optional, Union, Any
+from datetime import datetime, timezone
+from typing import Any, Dict, Optional, Union
 
 # noinspection PyUnresolvedReferences
 # jwt package depends on cryptography
@@ -9,11 +10,9 @@ import cryptography  # noqa: F401; pylint: disable=unused-import
 import jwt
 import requests
 import six
-import logging
 
-from nebius.iam.v1.token_service_pb2 import ExchangeTokenRequest
 from nebius.annotations_pb2 import api_service_name
-
+from nebius.iam.v1.token_service_pb2 import ExchangeTokenRequest
 
 _MDS_ADDR = "169.254.169.254"
 _MDS_URL = "http://{}/computeMetadata/v1/instance/service-accounts/default/token"
@@ -31,7 +30,7 @@ def set_up_api_endpoint(endpoint: str) -> str:
 
 def _get_api_service_url(service_ctor: Any) -> str:
     if not hasattr(service_ctor, "DESCRIPTOR"):
-        logging.debug("Service %s has no descriptor", name)
+        logging.debug("Service %s has no descriptor", service_ctor.__name__)
         return API_ENDPOINT
 
     name = service_ctor.DESCRIPTOR.services_by_name.keys()[0]
@@ -50,10 +49,10 @@ def _get_api_service_url(service_ctor: Any) -> str:
 def __validate_service_account_key(sa_key: Optional[dict]) -> bool:
     if not isinstance(sa_key, dict):
         raise RuntimeError(f"Invalid Service Account Key: expecting dictionary, actually got {type(sa_key)}")
-
-    obj_id = sa_key.get("id")
-    sa_id = sa_key.get("service_account_id")
-    private_key = sa_key.get("private_key")
+    sa_key = sa_key.get("subject-credentials")
+    obj_id = sa_key.get("kid")
+    sa_id = sa_key.get("iss")
+    private_key = sa_key.get("private-key")
 
     if not obj_id:
         raise RuntimeError("Invalid Service Account Key: missing key object id.")
@@ -98,10 +97,10 @@ class TokenAuth:
 
 
 class ServiceAccountAuth:
-    __SECONDS_IN_HOUR = 60.0 * 60.0
+    __5_MINUTES_IN_SECONDS = 5.0 * 60.0
 
     def __init__(self, sa_key: Dict[str, str], endpoint: Optional[str] = None):
-        self.__sa_key = sa_key
+        self.__sa_key = sa_key["subject-credentials"]
         self._endpoint = endpoint if endpoint is not None else API_ENDPOINT
 
     def get_token_request(self) -> "ExchangeTokenRequest":
@@ -114,23 +113,24 @@ class ServiceAccountAuth:
 
     def __prepare_request(self, endpoint: str) -> str:
         now = time.time()
-        now_utc = datetime.utcfromtimestamp(now)
-        exp_utc = datetime.utcfromtimestamp(now + self.__SECONDS_IN_HOUR)
+        exp_utc = int(datetime.fromtimestamp(now + self.__5_MINUTES_IN_SECONDS, timezone.utc).timestamp())
+        now_utc = int(datetime.fromtimestamp(now, timezone.utc).timestamp())
         payload = {
-            "iss": self.__sa_key["service_account_id"],
-            "sub": self.__sa_key["service_account_id"],
+            "iss": self.__sa_key["iss"],
+            "sub": self.__sa_key["sub"],
             "exp": exp_utc,
+            "iat": now_utc,
         }
 
         headers = {
-            "typ": "JWT",
-            "alg": "RS256",
-            "kid": self.__sa_key["id"],
+            "typ": self.__sa_key["type"],
+            "alg": self.__sa_key["alg"],
+            "kid": self.__sa_key["kid"],
         }
-        logging.info("Service Account Auth: %s", payload)
-        logging.info("Service Account Auth: %s", headers)
+        logging.debug("Service Account Auth: %s", payload)
+        logging.debug("Service Account Auth: %s", headers)
 
-        return jwt.encode(payload, self.__sa_key["private_key"], algorithm="PS256", headers=headers)
+        return jwt.encode(payload, self.__sa_key["private-key"], algorithm=self.__sa_key["alg"], headers=headers)
 
 
 class IamTokenAuth:

@@ -6,25 +6,34 @@ import os
 
 import grpc
 
-import nebiusai
+import nebius.compute.v1.disk_service_pb2 as disk_service_pb2
 import nebius.compute.v1.image_service_pb2 as image_service_pb2
 import nebius.compute.v1.instance_service_pb2 as instance_service_pb2
-import nebius.compute.v1.disk_service_pb2 as disk_service_pb2
+import nebiusai
+from nebius.common.v1.metadata_pb2 import ResourceMetadata
+from nebius.compute.v1.disk_pb2 import Disk, DiskSpec, DiskStatus
+from nebius.compute.v1.disk_service_pb2 import CreateDiskRequest, ListDisksRequest
+from nebius.compute.v1.disk_service_pb2_grpc import DiskServiceStub
 from nebius.compute.v1.image_service_pb2 import GetImageLatestByFamilyRequest
 from nebius.compute.v1.image_service_pb2_grpc import ImageServiceStub
-from nebius.compute.v1.instance_pb2 import Instance, AttachedDiskSpec,ResourcesSpec, ExistingDisk, InstanceSpec
-
+from nebius.compute.v1.instance_pb2 import (
+    AttachedDiskSpec,
+    ExistingDisk,
+    Instance,
+    InstanceSpec,
+    ResourcesSpec,
+)
 from nebius.compute.v1.instance_service_pb2 import (
     CreateInstanceRequest,
     DeleteInstanceRequest,
-    ListInstancesRequest
+    ListInstancesRequest,
 )
-from nebius.common.v1.metadata_pb2 import ResourceMetadata
-from nebius.compute.v1.disk_service_pb2 import CreateDiskRequest, ListDisksRequest
-from nebius.compute.v1.disk_pb2 import DiskSpec, Disk, DiskStatus
-from nebius.compute.v1.disk_service_pb2_grpc import DiskServiceStub
 from nebius.compute.v1.instance_service_pb2_grpc import InstanceServiceStub
-from nebius.compute.v1.network_interface_pb2 import NetworkInterfaceSpec, PublicIPAddress, IPAddress
+from nebius.compute.v1.network_interface_pb2 import (
+    IPAddress,
+    NetworkInterfaceSpec,
+    PublicIPAddress,
+)
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s: %(levelname)s: %(message)s"
@@ -47,8 +56,6 @@ def create_or_get_disk(sdk: nebiusai.SDK, parent_id, source_image_id):
         if disk.spec.source_image_id == source_image_id and disk.metadata.name == disk_name \
             and disk.status.state == DiskStatus.State.READY:
             logging.info("Disk found: %s", disk.metadata.id)
-            global DISK_ID
-            DISK_ID = disk.metadata.id
             return disk.metadata.id
 
     logging.info("Disk not found, creating new one")
@@ -81,6 +88,7 @@ def create_or_get_disk(sdk: nebiusai.SDK, parent_id, source_image_id):
 def create_instance(sdk: nebiusai.SDK, parent_id,  name, subnet_id):
     logging.info("Creating instance %s", name)
     global INSTANCE_ID
+    global DISK_ID
 
     image_service = sdk.client(image_service_pb2, ImageServiceStub)
     source_image_id = image_service.GetLatestByFamily(
@@ -88,6 +96,7 @@ def create_instance(sdk: nebiusai.SDK, parent_id,  name, subnet_id):
     )
     logging.info("source_image_id: %s", source_image_id.metadata.id)
     disk_id = create_or_get_disk(sdk, parent_id, source_image_id.metadata.id)
+    DISK_ID = disk_id
     client = sdk.client(instance_service_pb2, InstanceServiceStub)
     request = ListInstancesRequest(
         parent_id=parent_id
@@ -181,14 +190,10 @@ def main():
 
     fill_missing_arguments(sdk, arguments)
 
-    instance_id = None
-    disk_id = None
     try:
         instance_id, disk_id = create_instance(sdk, arguments.parent_id, arguments.name, arguments.subnet_id)
 
     finally:
-        import time
-        time.sleep(5)
         if INSTANCE_ID:
             logging.info("Deleting instance {}".format(INSTANCE_ID))
             logging.info("Deleted instance_id %s",delete_instance(sdk, INSTANCE_ID))
@@ -196,6 +201,7 @@ def main():
         if DISK_ID:
             logging.info("Deleting disk {}".format(DISK_ID))
             logging.info("Deleted disk_id %s", delete_disk(sdk, DISK_ID))
+
 
 
 
