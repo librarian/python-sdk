@@ -28,8 +28,8 @@ jobs:
       run: |
         make deps
 
-        git config --global user.name 'Yandex.Cloud Bot'
-        git config --global user.email 'ycloud-bot@yandex.ru'
+        git config --global user.name 'Librarian Bot'
+        git config --global user.email 'menkovich@gmail.com'
 
     - name: Python Semantic Release
       id: release
@@ -41,13 +41,13 @@ jobs:
       run: |
         python3 setup.py sdist bdist_wheel
 
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.10.1
-      # NOTE: DO NOT wrap the conditional in ${{ }} as it will always evaluate to true.
-      # See https://github.com/actions/runner/issues/1173
-      if: steps.release.outputs.released == 'true'
-      with:
-        password: ${{ secrets.PYPI_TOKEN }}
+#    - name: Publish package distributions to PyPI
+#      uses: pypa/gh-action-pypi-publish@v1.10.1
+#      # NOTE: DO NOT wrap the conditional in ${{ }} as it will always evaluate to true.
+#      # See https://github.com/actions/runner/issues/1173
+#      if: steps.release.outputs.released == 'true'
+#      with:
+#        password: ${{ secrets.PYPI_TOKEN }}
 
     - name: Publish package distributions to GitHub Releases
       uses: python-semantic-release/upload-to-gh-release@v9.8.8
