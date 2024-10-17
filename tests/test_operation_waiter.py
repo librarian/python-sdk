@@ -6,7 +6,10 @@ from nebiusai._operation_waiter import OperationWaiter
 class _OperationMock:
     def __init__(self, done):
         self.id = "some_id"
-        self.done = done
+        self.status = done
+        self.finished_at = type("FinishedAt", (), {"seconds": 0})
+        if done:
+            self.finished_at = type("FinishedAt", (), {"seconds": 1})
 
 
 class _WaitTenIterations:
@@ -25,7 +28,7 @@ def test_ten_iterations():
     for _ in waiter:
         count += 1
 
-    assert waiter.operation.done
+    assert waiter.done is True
     assert count == 10
 
 
@@ -40,4 +43,4 @@ def test_timeout():
     for _ in waiter:
         time.sleep(1)
 
-    assert waiter.operation.done is False
+    assert waiter.done is False

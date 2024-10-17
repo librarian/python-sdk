@@ -4,9 +4,9 @@ from threading import Event
 import grpc
 import pytest
 
-import nebius.compute.v1.zone_service_pb2 as zone_service_pb2
-import nebius.compute.v1.zone_service_pb2_grpc as zone_service_pb2_grpc
-from tests.grpc_server_mock import DEFAULT_ZONE, default_channel, grpc_server
+import nebius.compute.v1.image_service_pb2 as image_service_pb2
+import nebius.compute.v1.image_service_pb2_grpc as image_service_pb2_grpc
+from tests.grpc_server_mock import DEFAULT_IMAGE, default_channel, grpc_server
 from nebiusai import RetryInterceptor, backoff_linear_with_jitter, default_backoff
 
 
@@ -20,7 +20,7 @@ class _FailFirstAttempts:
             self.__fail_attempts -= 1
             context.set_code(self.code)
 
-        return DEFAULT_ZONE
+        return DEFAULT_IMAGE
 
     def reset(self, fail_attempts):
         self.__fail_attempts = fail_attempts
@@ -29,13 +29,13 @@ class _FailFirstAttempts:
 def test_five_retries():
     service = _FailFirstAttempts(5)
     server = grpc_server(service.handler)
-    request = zone_service_pb2.GetZoneRequest(zone_id="id")
+    request = image_service_pb2.GetImageRequest(id="id")
 
     with default_channel() as channel:
         for max_retry_count in range(4):
             interceptor = RetryInterceptor(max_retry_count=max_retry_count)
             ch = grpc.intercept_channel(channel, interceptor)
-            client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+            client = image_service_pb2_grpc.ImageServiceStub(ch)
 
             with pytest.raises(grpc.RpcError) as e:
                 client.Get(request)
@@ -45,10 +45,10 @@ def test_five_retries():
 
         interceptor = RetryInterceptor(max_retry_count=5)
         ch = grpc.intercept_channel(channel, interceptor)
-        client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+        client = image_service_pb2_grpc.ImageServiceStub(ch)
         res = client.Get(request)
 
-        assert res == DEFAULT_ZONE
+        assert res == DEFAULT_IMAGE
 
     server.stop(0)
 
@@ -56,7 +56,7 @@ def test_five_retries():
 def test_five_retries_internal():
     service = _FailFirstAttempts(5, code=grpc.StatusCode.INTERNAL)
     server = grpc_server(service.handler)
-    request = zone_service_pb2.GetZoneRequest(zone_id="id")
+    request = image_service_pb2.GetImageRequest(id="id")
     retriable_codes = (
         grpc.StatusCode.UNAVAILABLE,
         grpc.StatusCode.RESOURCE_EXHAUSTED,
@@ -67,7 +67,7 @@ def test_five_retries_internal():
         for max_retry_count in range(4):
             interceptor = RetryInterceptor(max_retry_count=max_retry_count, retriable_codes=retriable_codes)
             ch = grpc.intercept_channel(channel, interceptor)
-            client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+            client = image_service_pb2_grpc.ImageServiceStub(ch)
 
             with pytest.raises(grpc.RpcError) as e:
                 client.Get(request)
@@ -77,10 +77,10 @@ def test_five_retries_internal():
 
         interceptor = RetryInterceptor(max_retry_count=5, retriable_codes=retriable_codes)
         ch = grpc.intercept_channel(channel, interceptor)
-        client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+        client = image_service_pb2_grpc.ImageServiceStub(ch)
         res = client.Get(request)
 
-        assert res == DEFAULT_ZONE
+        assert res == DEFAULT_IMAGE
 
     server.stop(0)
 
@@ -95,7 +95,7 @@ class _RetriableCodes:
             context.set_code(self.__retriable_codes[self.__get_count])
 
         self.__get_count += 1
-        return DEFAULT_ZONE
+        return DEFAULT_IMAGE
 
     def reset_state(self):
         self.__get_count = 0
@@ -111,18 +111,18 @@ def test_retriable_codes():
         for retry_qty in range(len(retriable_codes)):
             interceptor = RetryInterceptor(max_retry_count=retry_qty, retriable_codes=retriable_codes)
             ch = grpc.intercept_channel(channel, interceptor)
-            client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+            client = image_service_pb2_grpc.ImageServiceStub(ch)
 
             with pytest.raises(grpc.RpcError) as e:
-                client.Get(zone_service_pb2.GetZoneRequest(zone_id="id"))
+                client.Get(image_service_pb2.GetImageRequest(id="id"))
 
             assert e.value.code() == retriable_codes[retry_qty]
             service.reset_state()
 
         interceptor = RetryInterceptor(max_retry_count=len(retriable_codes), retriable_codes=retriable_codes)
         ch = grpc.intercept_channel(channel, interceptor)
-        client = zone_service_pb2_grpc.ZoneServiceStub(ch)
-        assert client.Get(zone_service_pb2.GetZoneRequest(zone_id="id")) == DEFAULT_ZONE
+        client = image_service_pb2_grpc.ImageServiceStub(ch)
+        assert client.Get(image_service_pb2.GetImageRequest(id="id")) == DEFAULT_IMAGE
 
     server.stop(0)
 
@@ -147,7 +147,8 @@ class _AlwaysUnavailable:
             pass
 
         context.set_code(grpc.StatusCode.UNAVAILABLE)
-        return DEFAULT_ZONE
+        return DEFAULT_IMAGE
+
 
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.parametrize("backoff", [None, default_backoff(), backoff_linear_with_jitter(0.05, 0.1)])
@@ -164,10 +165,10 @@ def test_infinite_retries_deadline_and_backoff(backoff):
         )
 
         ch = grpc.intercept_channel(channel, interceptor)
-        client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+        client = image_service_pb2_grpc.ImageServiceStub(ch)
 
         with pytest.raises(grpc.RpcError) as e:
-            client.Get(zone_service_pb2.GetZoneRequest(zone_id="id"), timeout=5)
+            client.Get(image_service_pb2.GetImageRequest(id="id"), timeout=5)
 
         assert e.value.code() == grpc.StatusCode.DEADLINE_EXCEEDED
 
@@ -186,7 +187,7 @@ class _NeverReturnsInTime:
             self.__shutdown.wait()
 
         context.set_code(grpc.StatusCode.UNAVAILABLE)
-        return DEFAULT_ZONE
+        return DEFAULT_IMAGE
 
 
 def test_per_call_timeout():
@@ -203,10 +204,10 @@ def test_per_call_timeout():
         )
 
         ch = grpc.intercept_channel(channel, interceptor)
-        client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+        client = image_service_pb2_grpc.ImageServiceStub(ch)
 
         with pytest.raises(grpc.RpcError) as e:
-            client.Get(zone_service_pb2.GetZoneRequest(zone_id="id"))
+            client.Get(image_service_pb2.GetImageRequest(id="id"))
 
         assert e.value.code() == grpc.StatusCode.DEADLINE_EXCEEDED
 
@@ -253,7 +254,7 @@ class _HeaderTokenAndRetryCount:
         self.__query_count += 1
 
         context.set_code(grpc.StatusCode.UNAVAILABLE)
-        return DEFAULT_ZONE
+        return DEFAULT_IMAGE
 
 
 def test_header_token_and_retry_count():
@@ -265,10 +266,10 @@ def test_header_token_and_retry_count():
             max_retry_count=100, retriable_codes=[grpc.StatusCode.UNAVAILABLE], add_retry_count_to_header=True
         )
         ch = grpc.intercept_channel(channel, interceptor)
-        client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+        client = image_service_pb2_grpc.ImageServiceStub(ch)
 
         with pytest.raises(grpc.RpcError) as e:
-            client.Get(zone_service_pb2.GetZoneRequest(zone_id="id"))
+            client.Get(image_service_pb2.GetImageRequest(id="id"))
 
         assert e.value.code() == grpc.StatusCode.UNAVAILABLE
 
@@ -297,7 +298,7 @@ class _TokenUnchanged:
             self.__token_changed = True
 
         context.set_code(grpc.StatusCode.UNAVAILABLE)
-        return DEFAULT_ZONE
+        return DEFAULT_IMAGE
 
 
 def test_idempotency_token_not_changed():
@@ -310,10 +311,10 @@ def test_idempotency_token_not_changed():
             max_retry_count=100, retriable_codes=[grpc.StatusCode.UNAVAILABLE], add_retry_count_to_header=True
         )
         ch = grpc.intercept_channel(channel, interceptor)
-        client = zone_service_pb2_grpc.ZoneServiceStub(ch)
+        client = image_service_pb2_grpc.ImageServiceStub(ch)
 
         with pytest.raises(grpc.RpcError) as e:
-            client.Get(zone_service_pb2.GetZoneRequest(zone_id="id"), metadata=[("idempotency-key", token)])
+            client.Get(image_service_pb2.GetImageRequest(id="id"), metadata=[("idempotency-key", token)])
 
         assert e.value.code() == grpc.StatusCode.UNAVAILABLE
 
