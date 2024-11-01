@@ -19,7 +19,7 @@ _MDS_URL = "http://{}/computeMetadata/v1/instance/service-accounts/default/token
 _MDS_HEADERS = {"Metadata-Flavor": "Google"}
 _MDS_TIMEOUT = (1.0, 1.0)  # 1sec connect, 1sec read
 
-API_ENDPOINT = "api.eu-north1.nebius.cloud"
+API_ENDPOINT = "api.eu.nebius.cloud"
 
 
 def set_up_api_endpoint(endpoint: str) -> str:

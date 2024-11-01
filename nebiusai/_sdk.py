@@ -117,6 +117,7 @@ class SDK:
         logger: Optional["logging.Logger"] = None,
     ) -> Union["OperationResult", "OperationError"]:
         logger.info("Creating operation for service %s, method %s and request %s", service, method_name, request)
+        operation = None
         try:
             operation = getattr(self.client(service_ctor, service), method_name)(request)
             result = self.wait_operation_and_get_result(
@@ -129,7 +130,11 @@ class SDK:
             )
             return result
         except grpc.RpcError as e:
+            logger.info("Operation: %s", operation)
+            logger.info("Error: %s", e)
+            logger.info("Metadata: %s", e.trailing_metadata())
             raise RuntimeError(f"Failed to create operation: {e.details()}") from None
+
 
 
 def _service_for_ctor(stub_ctor: Any) -> str:
