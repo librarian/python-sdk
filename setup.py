@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 packages = find_packages(".", include=["nebius*"])
 
-__version__ = "0.2.0"
+__version__ = "0.1.0"
 
 with open("README.md") as file:
     README = file.read()
