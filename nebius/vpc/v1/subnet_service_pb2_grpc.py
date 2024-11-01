@@ -30,6 +30,11 @@ class SubnetServiceStub(object):
                 request_serializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsRequest.SerializeToString,
                 response_deserializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsResponse.FromString,
                 )
+        self.ListByNetwork = channel.unary_unary(
+                '/nebius.vpc.v1.SubnetService/ListByNetwork',
+                request_serializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsByNetworkRequest.SerializeToString,
+                response_deserializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsResponse.FromString,
+                )
 
 
 class SubnetServiceServicer(object):
@@ -53,6 +58,12 @@ class SubnetServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListByNetwork(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SubnetServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -69,6 +80,11 @@ def add_SubnetServiceServicer_to_server(servicer, server):
             'List': grpc.unary_unary_rpc_method_handler(
                     servicer.List,
                     request_deserializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsRequest.FromString,
+                    response_serializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsResponse.SerializeToString,
+            ),
+            'ListByNetwork': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListByNetwork,
+                    request_deserializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsByNetworkRequest.FromString,
                     response_serializer=nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsResponse.SerializeToString,
             ),
     }
@@ -128,6 +144,23 @@ class SubnetService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/nebius.vpc.v1.SubnetService/List',
             nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsRequest.SerializeToString,
+            nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListByNetwork(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/nebius.vpc.v1.SubnetService/ListByNetwork',
+            nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsByNetworkRequest.SerializeToString,
             nebius_dot_vpc_dot_v1_dot_subnet__service__pb2.ListSubnetsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

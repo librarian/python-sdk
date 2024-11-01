@@ -57,6 +57,7 @@ class NodeGroupSpec(google.protobuf.message.Message):
 
     VERSION_FIELD_NUMBER: builtins.int
     FIXED_NODE_COUNT_FIELD_NUMBER: builtins.int
+    AUTOSCALING_FIELD_NUMBER: builtins.int
     TEMPLATE_FIELD_NUMBER: builtins.int
     STRATEGY_FIELD_NUMBER: builtins.int
     version: builtins.str
@@ -67,6 +68,8 @@ class NodeGroupSpec(google.protobuf.message.Message):
     fixed_node_count: builtins.int
     """number of nodes in the group"""
     @property
+    def autoscaling(self) -> global___NodeGroupAutoscalingSpec: ...
+    @property
     def template(self) -> global___NodeTemplate: ...
     @property
     def strategy(self) -> global___NodeGroupDeploymentStrategy: ...
@@ -75,12 +78,13 @@ class NodeGroupSpec(google.protobuf.message.Message):
         *,
         version: builtins.str = ...,
         fixed_node_count: builtins.int = ...,
+        autoscaling: global___NodeGroupAutoscalingSpec | None = ...,
         template: global___NodeTemplate | None = ...,
         strategy: global___NodeGroupDeploymentStrategy | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["fixed_node_count", b"fixed_node_count", "size", b"size", "strategy", b"strategy", "template", b"template"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["fixed_node_count", b"fixed_node_count", "size", b"size", "strategy", b"strategy", "template", b"template", "version", b"version"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["size", b"size"]) -> typing.Literal["fixed_node_count"] | None: ...
+    def HasField(self, field_name: typing.Literal["autoscaling", b"autoscaling", "fixed_node_count", b"fixed_node_count", "size", b"size", "strategy", b"strategy", "template", b"template"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["autoscaling", b"autoscaling", "fixed_node_count", b"fixed_node_count", "size", b"size", "strategy", b"strategy", "template", b"template", "version", b"version"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["size", b"size"]) -> typing.Literal["fixed_node_count", "autoscaling"] | None: ...
 
 global___NodeGroupSpec = NodeGroupSpec
 
@@ -282,6 +286,24 @@ class ExistingFilesystem(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["id", b"id"]) -> None: ...
 
 global___ExistingFilesystem = ExistingFilesystem
+
+@typing.final
+class NodeGroupAutoscalingSpec(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MIN_NODE_COUNT_FIELD_NUMBER: builtins.int
+    MAX_NODE_COUNT_FIELD_NUMBER: builtins.int
+    min_node_count: builtins.int
+    max_node_count: builtins.int
+    def __init__(
+        self,
+        *,
+        min_node_count: builtins.int = ...,
+        max_node_count: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["max_node_count", b"max_node_count", "min_node_count", b"min_node_count"]) -> None: ...
+
+global___NodeGroupAutoscalingSpec = NodeGroupAutoscalingSpec
 
 @typing.final
 class NodeTaint(google.protobuf.message.Message):

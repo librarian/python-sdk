@@ -4,11 +4,13 @@ isort:skip_file
 """
 
 import builtins
+import collections.abc
 import google.protobuf.descriptor
 import google.protobuf.descriptor_pb2
 import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.internal.extension_dict
+import google.protobuf.message
 import sys
 import typing
 
@@ -102,6 +104,12 @@ class _FieldBehaviorEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._
     Usually, that field is a feature spec value, which by default is computed.
     Values marked with this annotation won't raise error if they are not set
     and the returned value is not equal to protobuf default.
+
+    IMPORTANT:
+    Updating this value from explicit to default may not lead to Update call in
+    some tools (eg Terraform).
+    Compound values (messages, lists and maps) may result in unpredictable
+    updates (see examples in guidelines).
     """
 
 class FieldBehavior(_FieldBehavior, metaclass=_FieldBehaviorEnumTypeWrapper): ...
@@ -136,14 +144,60 @@ NON_EMPTY_DEFAULT: FieldBehavior.ValueType  # 7
 Usually, that field is a feature spec value, which by default is computed.
 Values marked with this annotation won't raise error if they are not set
 and the returned value is not equal to protobuf default.
+
+IMPORTANT:
+Updating this value from explicit to default may not lead to Update call in
+some tools (eg Terraform).
+Compound values (messages, lists and maps) may result in unpredictable
+updates (see examples in guidelines).
 """
 global___FieldBehavior = FieldBehavior
 
+@typing.final
+class RegionRouting(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    NID_FIELD_NUMBER: builtins.int
+    DISABLED_FIELD_NUMBER: builtins.int
+    STRICT_FIELD_NUMBER: builtins.int
+    disabled: builtins.bool
+    """If true, region routing is disabled for the method.
+    When this is set, requests will not be forwarded to a different region, even if an NID is present.
+    """
+    strict: builtins.bool
+    """In strict mode, the API Gateway returns an INVALID_ARGUMENT error to the user when a routing error occurs,
+    rather than forwarding the request to the local region.
+    """
+    @property
+    def nid(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+        """A list of fields to extract the NID from, in order of priority.
+        The API Gateway will check each field in sequence and use the first valid NID it finds.
+        This overrides the default NID lookup order: `id`, `parent_id`, `metadata.id`, `metadata.parent_id`.
+        """
+
+    def __init__(
+        self,
+        *,
+        nid: collections.abc.Iterable[builtins.str] | None = ...,
+        disabled: builtins.bool = ...,
+        strict: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["disabled", b"disabled", "nid", b"nid", "strict", b"strict"]) -> None: ...
+
+global___RegionRouting = RegionRouting
+
+UNSTABLE_FIELD_NUMBER: builtins.int
 API_SERVICE_NAME_FIELD_NUMBER: builtins.int
+REGION_ROUTING_FIELD_NUMBER: builtins.int
 RESOURCE_BEHAVIOR_FIELD_NUMBER: builtins.int
 FIELD_BEHAVIOR_FIELD_NUMBER: builtins.int
 SENSITIVE_FIELD_NUMBER: builtins.int
+CREDENTIALS_FIELD_NUMBER: builtins.int
 ONEOF_BEHAVIOR_FIELD_NUMBER: builtins.int
+unstable: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.FileOptions, builtins.bool]
+"""Marks the file as unstable, indicating that it may change in a non-backward compatible way in the future.
+Changes to files marked with this option are ignored by the breaking change detector.
+"""
 api_service_name: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.ServiceOptions, builtins.str]
 """by default API tools assume that every service is configured with address
    in a format: <first-part-after-nebius-in-grpc-path>.<domain>
@@ -152,12 +206,51 @@ this option is used to override the default behavior for private api domains
    example for iam access: option (api_service_name) = "access-service.iam";
    that leads to access-service.iam.<domain>
 """
+region_routing: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MethodOptions, global___RegionRouting]
+"""Defines custom region routing rules for a method.
+
+By default, the API Gateway searches for the NID in the following proto message fields (in order):
+ - `id`
+ - `parent_id`
+ - `metadata.id`
+ - `metadata.parent_id`
+
+If a valid NID is found, the request is routed to the associated region by routing code.
+Otherwise, the request is routed to the local region.
+These default rules generally cover most use cases.
+
+To customize the routing behavior, use the `region_routing` option:
+ - To specify a custom field path(s) for the NID, use the `nid` field.
+ - To return an INVALID_ARGUMENT error instead of forwarding to the local region, set `strict` to `true`.
+ - To completely disable region routing, set `disabled` to `true`.
+
+Examples:
+
+   service MyService {
+     rpc DefaultRouting(Request) returns (Response);
+     rpc CustomRoutingField(Request) returns (Response) {
+       option (region_routing).nid = "path.to.resource_id";
+     };
+     rpc SeveralFieldsToSearch(Request) returns (Response) {
+       option (region_routing).nid = "path.to.resource_id";
+       option (region_routing).nid = "path.to.parent_id";
+       option (region_routing).strict = true;
+     };
+     rpc DisabledRouting(Request) returns (Response) {
+       option (region_routing).disabled = true;
+     };
+   }
+"""
 resource_behavior: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, google.protobuf.internal.containers.RepeatedScalarFieldContainer[global___ResourceBehavior.ValueType]]
 field_behavior: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.FieldOptions, google.protobuf.internal.containers.RepeatedScalarFieldContainer[global___FieldBehavior.ValueType]]
 """Field behavior describes how the field behaves on input or output."""
 sensitive: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.FieldOptions, builtins.bool]
 """Sensitive field is masked/removed from the message while logging, storing in DB and
 on all others persistent layers (except specialized storage like PDS).
+"""
+credentials: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.FieldOptions, builtins.bool]
+"""Credentials field is masked access tokens/jwt/session from the message while logging, storing in DB and
+on all others persistent layers
 """
 oneof_behavior: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.OneofOptions, google.protobuf.internal.containers.RepeatedScalarFieldContainer[global___FieldBehavior.ValueType]]
 """Field behavior describes how oneof behaves on input or output."""

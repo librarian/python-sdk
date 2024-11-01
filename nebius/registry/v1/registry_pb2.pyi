@@ -58,14 +58,17 @@ class RegistrySpec(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     DESCRIPTION_FIELD_NUMBER: builtins.int
+    IMAGES_COUNT_FIELD_NUMBER: builtins.int
     description: builtins.str
+    images_count: builtins.int
     """ Registry.Type type = 2;"""
     def __init__(
         self,
         *,
         description: builtins.str = ...,
+        images_count: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["description", b"description"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["description", b"description", "images_count", b"images_count"]) -> None: ...
 
 global___RegistrySpec = RegistrySpec
 
@@ -82,11 +85,13 @@ class RegistryStatus(google.protobuf.message.Message):
         CREATING: RegistryStatus._State.ValueType  # 0
         ACTIVE: RegistryStatus._State.ValueType  # 1
         DELETING: RegistryStatus._State.ValueType  # 2
+        SUSPENDED: RegistryStatus._State.ValueType  # 3
 
     class State(_State, metaclass=_StateEnumTypeWrapper): ...
     CREATING: RegistryStatus.State.ValueType  # 0
     ACTIVE: RegistryStatus.State.ValueType  # 1
     DELETING: RegistryStatus.State.ValueType  # 2
+    SUSPENDED: RegistryStatus.State.ValueType  # 3
 
     STATE_FIELD_NUMBER: builtins.int
     state: global___RegistryStatus.State.ValueType

@@ -28,6 +28,7 @@ class ServiceError(google.protobuf.message.Message):
     OPERATION_ABORTED_FIELD_NUMBER: builtins.int
     TOO_MANY_REQUESTS_FIELD_NUMBER: builtins.int
     QUOTA_FAILURE_FIELD_NUMBER: builtins.int
+    NOT_ENOUGH_RESOURCES_FIELD_NUMBER: builtins.int
     INTERNAL_ERROR_FIELD_NUMBER: builtins.int
     service: builtins.str
     """ID of Service which the error originated in. E.g. "dns"."""
@@ -57,6 +58,8 @@ class ServiceError(google.protobuf.message.Message):
     @property
     def quota_failure(self) -> global___QuotaFailure: ...
     @property
+    def not_enough_resources(self) -> global___NotEnoughResources: ...
+    @property
     def internal_error(self) -> global___InternalError: ...
     def __init__(
         self,
@@ -73,11 +76,12 @@ class ServiceError(google.protobuf.message.Message):
         operation_aborted: global___OperationAborted | None = ...,
         too_many_requests: global___TooManyRequests | None = ...,
         quota_failure: global___QuotaFailure | None = ...,
+        not_enough_resources: global___NotEnoughResources | None = ...,
         internal_error: global___InternalError | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["bad_request", b"bad_request", "bad_resource_state", b"bad_resource_state", "details", b"details", "internal_error", b"internal_error", "operation_aborted", b"operation_aborted", "out_of_range", b"out_of_range", "permission_denied", b"permission_denied", "quota_failure", b"quota_failure", "resource_already_exists", b"resource_already_exists", "resource_conflict", b"resource_conflict", "resource_not_found", b"resource_not_found", "too_many_requests", b"too_many_requests"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["bad_request", b"bad_request", "bad_resource_state", b"bad_resource_state", "code", b"code", "details", b"details", "internal_error", b"internal_error", "operation_aborted", b"operation_aborted", "out_of_range", b"out_of_range", "permission_denied", b"permission_denied", "quota_failure", b"quota_failure", "resource_already_exists", b"resource_already_exists", "resource_conflict", b"resource_conflict", "resource_not_found", b"resource_not_found", "service", b"service", "too_many_requests", b"too_many_requests"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["details", b"details"]) -> typing.Literal["bad_request", "bad_resource_state", "resource_not_found", "resource_already_exists", "out_of_range", "permission_denied", "resource_conflict", "operation_aborted", "too_many_requests", "quota_failure", "internal_error"] | None: ...
+    def HasField(self, field_name: typing.Literal["bad_request", b"bad_request", "bad_resource_state", b"bad_resource_state", "details", b"details", "internal_error", b"internal_error", "not_enough_resources", b"not_enough_resources", "operation_aborted", b"operation_aborted", "out_of_range", b"out_of_range", "permission_denied", b"permission_denied", "quota_failure", b"quota_failure", "resource_already_exists", b"resource_already_exists", "resource_conflict", b"resource_conflict", "resource_not_found", b"resource_not_found", "too_many_requests", b"too_many_requests"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["bad_request", b"bad_request", "bad_resource_state", b"bad_resource_state", "code", b"code", "details", b"details", "internal_error", b"internal_error", "not_enough_resources", b"not_enough_resources", "operation_aborted", b"operation_aborted", "out_of_range", b"out_of_range", "permission_denied", b"permission_denied", "quota_failure", b"quota_failure", "resource_already_exists", b"resource_already_exists", "resource_conflict", b"resource_conflict", "resource_not_found", b"resource_not_found", "service", b"service", "too_many_requests", b"too_many_requests"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["details", b"details"]) -> typing.Literal["bad_request", "bad_resource_state", "resource_not_found", "resource_already_exists", "out_of_range", "permission_denied", "resource_conflict", "operation_aborted", "too_many_requests", "quota_failure", "not_enough_resources", "internal_error"] | None: ...
 
 global___ServiceError = ServiceError
 
@@ -350,3 +354,48 @@ class QuotaFailure(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["violations", b"violations"]) -> None: ...
 
 global___QuotaFailure = QuotaFailure
+
+@typing.final
+class NotEnoughResources(google.protobuf.message.Message):
+    """Indicates that there are not enough resources available to perform the requested action."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    @typing.final
+    class Violation(google.protobuf.message.Message):
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+        RESOURCE_TYPE_FIELD_NUMBER: builtins.int
+        MESSAGE_FIELD_NUMBER: builtins.int
+        REQUESTED_FIELD_NUMBER: builtins.int
+        resource_type: builtins.str
+        """The type of resource that is insufficient.
+        This field is populated when it is possible to determine the lacking resource type.
+        **Not for programmatic use.**
+        """
+        message: builtins.str
+        """A description of how the resource is insufficient."""
+        requested: builtins.str
+        """Requested value."""
+        def __init__(
+            self,
+            *,
+            resource_type: builtins.str = ...,
+            message: builtins.str = ...,
+            requested: builtins.str = ...,
+        ) -> None: ...
+        def ClearField(self, field_name: typing.Literal["message", b"message", "requested", b"requested", "resource_type", b"resource_type"]) -> None: ...
+
+    VIOLATIONS_FIELD_NUMBER: builtins.int
+    @property
+    def violations(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___NotEnoughResources.Violation]:
+        """Describes all resource violations."""
+
+    def __init__(
+        self,
+        *,
+        violations: collections.abc.Iterable[global___NotEnoughResources.Violation] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["violations", b"violations"]) -> None: ...
+
+global___NotEnoughResources = NotEnoughResources

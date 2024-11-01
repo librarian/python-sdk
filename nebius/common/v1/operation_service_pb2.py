@@ -13,9 +13,10 @@ _sym_db = _symbol_database.Default()
 
 from buf.validate import validate_pb2 as buf_dot_validate_dot_validate__pb2
 from nebius.common.v1 import operation_pb2 as nebius_dot_common_dot_v1_dot_operation__pb2
+from nebius import annotations_pb2 as nebius_dot_annotations__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(nebius/common/v1/operation_service.proto\x12\x10nebius.common.v1\x1a\x1b\x62uf/validate/validate.proto\x1a nebius/common/v1/operation.proto\")\n\x13GetOperationRequest\x12\x12\n\x02id\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01\"[\n\x15ListOperationsRequest\x12\x1b\n\x0bresource_id\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01\x12\x11\n\tpage_size\x18\x02 \x01(\x03\x12\x12\n\npage_token\x18\x03 \x01(\t\"b\n\x16ListOperationsResponse\x12/\n\noperations\x18\x01 \x03(\x0b\x32\x1b.nebius.common.v1.Operation\x12\x17\n\x0fnext_page_token\x18\x02 \x01(\t2\xb8\x01\n\x10OperationService\x12I\n\x03Get\x12%.nebius.common.v1.GetOperationRequest\x1a\x1b.nebius.common.v1.Operation\x12Y\n\x04List\x12\'.nebius.common.v1.ListOperationsRequest\x1a(.nebius.common.v1.ListOperationsResponseBb\n\x17\x61i.nebius.pub.common.v1B\x15OperationServiceProtoP\x01Z.github.com/nebius/gosdk/proto/nebius/common/v1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(nebius/common/v1/operation_service.proto\x12\x10nebius.common.v1\x1a\x1b\x62uf/validate/validate.proto\x1a nebius/common/v1/operation.proto\x1a\x18nebius/annotations.proto\")\n\x13GetOperationRequest\x12\x12\n\x02id\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01\"[\n\x15ListOperationsRequest\x12\x1b\n\x0bresource_id\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01\x12\x11\n\tpage_size\x18\x02 \x01(\x03\x12\x12\n\npage_token\x18\x03 \x01(\t\"b\n\x16ListOperationsResponse\x12/\n\noperations\x18\x01 \x03(\x0b\x32\x1b.nebius.common.v1.Operation\x12\x17\n\x0fnext_page_token\x18\x02 \x01(\t2\xcb\x01\n\x10OperationService\x12I\n\x03Get\x12%.nebius.common.v1.GetOperationRequest\x1a\x1b.nebius.common.v1.Operation\x12l\n\x04List\x12\'.nebius.common.v1.ListOperationsRequest\x1a(.nebius.common.v1.ListOperationsResponse\"\x11\x9a\xb5\x18\r\n\x0bresource_idBb\n\x17\x61i.nebius.pub.common.v1B\x15OperationServiceProtoP\x01Z.github.com/nebius/gosdk/proto/nebius/common/v1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -27,12 +28,14 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _GETOPERATIONREQUEST.fields_by_name['id']._serialized_options = b'\272H\003\310\001\001'
   _LISTOPERATIONSREQUEST.fields_by_name['resource_id']._options = None
   _LISTOPERATIONSREQUEST.fields_by_name['resource_id']._serialized_options = b'\272H\003\310\001\001'
-  _globals['_GETOPERATIONREQUEST']._serialized_start=125
-  _globals['_GETOPERATIONREQUEST']._serialized_end=166
-  _globals['_LISTOPERATIONSREQUEST']._serialized_start=168
-  _globals['_LISTOPERATIONSREQUEST']._serialized_end=259
-  _globals['_LISTOPERATIONSRESPONSE']._serialized_start=261
-  _globals['_LISTOPERATIONSRESPONSE']._serialized_end=359
-  _globals['_OPERATIONSERVICE']._serialized_start=362
-  _globals['_OPERATIONSERVICE']._serialized_end=546
+  _OPERATIONSERVICE.methods_by_name['List']._options = None
+  _OPERATIONSERVICE.methods_by_name['List']._serialized_options = b'\232\265\030\r\n\013resource_id'
+  _globals['_GETOPERATIONREQUEST']._serialized_start=151
+  _globals['_GETOPERATIONREQUEST']._serialized_end=192
+  _globals['_LISTOPERATIONSREQUEST']._serialized_start=194
+  _globals['_LISTOPERATIONSREQUEST']._serialized_end=285
+  _globals['_LISTOPERATIONSRESPONSE']._serialized_start=287
+  _globals['_LISTOPERATIONSRESPONSE']._serialized_end=385
+  _globals['_OPERATIONSERVICE']._serialized_start=388
+  _globals['_OPERATIONSERVICE']._serialized_end=591
 # @@protoc_insertion_point(module_scope)

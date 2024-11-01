@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import descriptor_pb2 as google_dot_protobuf_dot_descriptor__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18nebius/annotations.proto\x12\x06nebius\x1a google/protobuf/descriptor.proto*c\n\x10ResourceBehavior\x12!\n\x1dRESOURCE_BEHAVIOR_UNSPECIFIED\x10\x00\x12\x0b\n\x07MOVABLE\x10\x01\x12\x0b\n\x07UNNAMED\x10\x02\x12\x12\n\x0eIMMUTABLE_NAME\x10\x03*\xa2\x01\n\rFieldBehavior\x12\x1e\n\x1a\x46IELD_BEHAVIOR_UNSPECIFIED\x10\x00\x12\r\n\tIMMUTABLE\x10\x02\x12\x0e\n\nIDENTIFIER\x10\x03\x12\x0e\n\nINPUT_ONLY\x10\x04\x12\x0f\n\x0bOUTPUT_ONLY\x10\x05\x12\x1a\n\x16MEANINGFUL_EMPTY_VALUE\x10\x06\x12\x15\n\x11NON_EMPTY_DEFAULT\x10\x07::\n\x10\x61pi_service_name\x12\x1f.google.protobuf.ServiceOptions\x18\xa7\t \x01(\t:U\n\x11resource_behavior\x12\x1f.google.protobuf.MessageOptions\x18\xa7\t \x03(\x0e\x32\x18.nebius.ResourceBehavior:M\n\x0e\x66ield_behavior\x12\x1d.google.protobuf.FieldOptions\x18\xa7\t \x03(\x0e\x32\x15.nebius.FieldBehavior:1\n\tsensitive\x12\x1d.google.protobuf.FieldOptions\x18\xa8\t \x01(\x08:M\n\x0eoneof_behavior\x12\x1d.google.protobuf.OneofOptions\x18\xa7\t \x03(\x0e\x32\x15.nebius.FieldBehaviorBI\n\rai.nebius.pubB\x10\x41nnotationsProtoP\x01Z$github.com/nebius/gosdk/proto/nebiusb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18nebius/annotations.proto\x12\x06nebius\x1a google/protobuf/descriptor.proto\">\n\rRegionRouting\x12\x0b\n\x03nid\x18\x01 \x03(\t\x12\x10\n\x08\x64isabled\x18\x02 \x01(\x08\x12\x0e\n\x06strict\x18\x03 \x01(\x08*c\n\x10ResourceBehavior\x12!\n\x1dRESOURCE_BEHAVIOR_UNSPECIFIED\x10\x00\x12\x0b\n\x07MOVABLE\x10\x01\x12\x0b\n\x07UNNAMED\x10\x02\x12\x12\n\x0eIMMUTABLE_NAME\x10\x03*\xa2\x01\n\rFieldBehavior\x12\x1e\n\x1a\x46IELD_BEHAVIOR_UNSPECIFIED\x10\x00\x12\r\n\tIMMUTABLE\x10\x02\x12\x0e\n\nIDENTIFIER\x10\x03\x12\x0e\n\nINPUT_ONLY\x10\x04\x12\x0f\n\x0bOUTPUT_ONLY\x10\x05\x12\x1a\n\x16MEANINGFUL_EMPTY_VALUE\x10\x06\x12\x15\n\x11NON_EMPTY_DEFAULT\x10\x07:/\n\x08unstable\x12\x1c.google.protobuf.FileOptions\x18\xa7\t \x01(\x08::\n\x10\x61pi_service_name\x12\x1f.google.protobuf.ServiceOptions\x18\xa7\t \x01(\t:O\n\x0eregion_routing\x12\x1e.google.protobuf.MethodOptions\x18\xd3\x86\x03 \x01(\x0b\x32\x15.nebius.RegionRouting:U\n\x11resource_behavior\x12\x1f.google.protobuf.MessageOptions\x18\xa7\t \x03(\x0e\x32\x18.nebius.ResourceBehavior:M\n\x0e\x66ield_behavior\x12\x1d.google.protobuf.FieldOptions\x18\xa7\t \x03(\x0e\x32\x15.nebius.FieldBehavior:1\n\tsensitive\x12\x1d.google.protobuf.FieldOptions\x18\xa8\t \x01(\x08:3\n\x0b\x63redentials\x12\x1d.google.protobuf.FieldOptions\x18\xa9\t \x01(\x08:M\n\x0eoneof_behavior\x12\x1d.google.protobuf.OneofOptions\x18\xa7\t \x03(\x0e\x32\x15.nebius.FieldBehaviorBI\n\rai.nebius.pubB\x10\x41nnotationsProtoP\x01Z$github.com/nebius/gosdk/proto/nebiusb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,8 +22,10 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'nebius.annotations_pb2', _g
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\rai.nebius.pubB\020AnnotationsProtoP\001Z$github.com/nebius/gosdk/proto/nebius'
-  _globals['_RESOURCEBEHAVIOR']._serialized_start=70
-  _globals['_RESOURCEBEHAVIOR']._serialized_end=169
-  _globals['_FIELDBEHAVIOR']._serialized_start=172
-  _globals['_FIELDBEHAVIOR']._serialized_end=334
+  _globals['_RESOURCEBEHAVIOR']._serialized_start=134
+  _globals['_RESOURCEBEHAVIOR']._serialized_end=233
+  _globals['_FIELDBEHAVIOR']._serialized_start=236
+  _globals['_FIELDBEHAVIOR']._serialized_end=398
+  _globals['_REGIONROUTING']._serialized_start=70
+  _globals['_REGIONROUTING']._serialized_end=132
 # @@protoc_insertion_point(module_scope)

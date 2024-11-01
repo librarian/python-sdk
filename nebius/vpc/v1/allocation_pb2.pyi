@@ -124,7 +124,7 @@ class IPv4PublicAllocationSpec(google.protobuf.message.Message):
     Required same subnet to use allocation in subnet-resources (e.g. Network Interface)
     """
     pool_id: builtins.str
-    """Pool for the IPv4 private allocation."""
+    """Pool for the IPv4 public allocation."""
     def __init__(
         self,
         *,

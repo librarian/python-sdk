@@ -35,6 +35,11 @@ class SubnetServiceStub:
         nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse,
     ]
 
+    ListByNetwork: grpc.UnaryUnaryMultiCallable[
+        nebius.vpc.v1.subnet_service_pb2.ListSubnetsByNetworkRequest,
+        nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse,
+    ]
+
 class SubnetServiceAsyncStub:
     Get: grpc.aio.UnaryUnaryMultiCallable[
         nebius.vpc.v1.subnet_service_pb2.GetSubnetRequest,
@@ -48,6 +53,11 @@ class SubnetServiceAsyncStub:
 
     List: grpc.aio.UnaryUnaryMultiCallable[
         nebius.vpc.v1.subnet_service_pb2.ListSubnetsRequest,
+        nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse,
+    ]
+
+    ListByNetwork: grpc.aio.UnaryUnaryMultiCallable[
+        nebius.vpc.v1.subnet_service_pb2.ListSubnetsByNetworkRequest,
         nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse,
     ]
 
@@ -70,6 +80,13 @@ class SubnetServiceServicer(metaclass=abc.ABCMeta):
     def List(
         self,
         request: nebius.vpc.v1.subnet_service_pb2.ListSubnetsRequest,
+        context: _ServicerContext,
+    ) -> typing.Union[nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse, collections.abc.Awaitable[nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse]]: ...
+
+    @abc.abstractmethod
+    def ListByNetwork(
+        self,
+        request: nebius.vpc.v1.subnet_service_pb2.ListSubnetsByNetworkRequest,
         context: _ServicerContext,
     ) -> typing.Union[nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse, collections.abc.Awaitable[nebius.vpc.v1.subnet_service_pb2.ListSubnetsResponse]]: ...
 

@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1cnebius/common/v1/error.proto\x12\x10nebius.common.v1\"\xef\x05\n\x0cServiceError\x12\x0f\n\x07service\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x33\n\x0b\x62\x61\x64_request\x18\x64 \x01(\x0b\x32\x1c.nebius.common.v1.BadRequestH\x00\x12@\n\x12\x62\x61\x64_resource_state\x18n \x01(\x0b\x32\".nebius.common.v1.BadResourceStateH\x00\x12@\n\x12resource_not_found\x18o \x01(\x0b\x32\".nebius.common.v1.ResourceNotFoundH\x00\x12J\n\x17resource_already_exists\x18p \x01(\x0b\x32\'.nebius.common.v1.ResourceAlreadyExistsH\x00\x12\x34\n\x0cout_of_range\x18q \x01(\x0b\x32\x1c.nebius.common.v1.OutOfRangeH\x00\x12?\n\x11permission_denied\x18x \x01(\x0b\x32\".nebius.common.v1.PermissionDeniedH\x00\x12@\n\x11resource_conflict\x18\x82\x01 \x01(\x0b\x32\".nebius.common.v1.ResourceConflictH\x00\x12@\n\x11operation_aborted\x18\x83\x01 \x01(\x0b\x32\".nebius.common.v1.OperationAbortedH\x00\x12?\n\x11too_many_requests\x18\x8c\x01 \x01(\x0b\x32!.nebius.common.v1.TooManyRequestsH\x00\x12\x38\n\rquota_failure\x18\x8d\x01 \x01(\x0b\x32\x1e.nebius.common.v1.QuotaFailureH\x00\x12:\n\x0einternal_error\x18\xe7\x07 \x01(\x0b\x32\x1f.nebius.common.v1.InternalErrorH\x00\x42\t\n\x07\x64\x65tails\"u\n\nBadRequest\x12:\n\nviolations\x18\x01 \x03(\x0b\x32&.nebius.common.v1.BadRequest.Violation\x1a+\n\tViolation\x12\r\n\x05\x66ield\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"8\n\x10\x42\x61\x64ResourceState\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\'\n\x10ResourceNotFound\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\",\n\x15ResourceAlreadyExists\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"8\n\x10ResourceConflict\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"^\n\x10OperationAborted\x12\x14\n\x0coperation_id\x18\x01 \x01(\t\x12\x1f\n\x17\x61\x62orted_by_operation_id\x18\x02 \x01(\t\x12\x13\n\x0bresource_id\x18\x03 \x01(\t\".\n\nOutOfRange\x12\x11\n\trequested\x18\x01 \x01(\t\x12\r\n\x05limit\x18\x02 \x01(\t\"\'\n\x10PermissionDenied\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"5\n\rInternalError\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x10\n\x08trace_id\x18\x02 \x01(\t\"$\n\x0fTooManyRequests\x12\x11\n\tviolation\x18\x01 \x01(\t\"\x9b\x01\n\x0cQuotaFailure\x12<\n\nviolations\x18\x01 \x03(\x0b\x32(.nebius.common.v1.QuotaFailure.Violation\x1aM\n\tViolation\x12\r\n\x05quota\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\r\n\x05limit\x18\x03 \x01(\t\x12\x11\n\trequested\x18\x04 \x01(\tBW\n\x17\x61i.nebius.pub.common.v1B\nErrorProtoP\x01Z.github.com/nebius/gosdk/proto/nebius/common/v1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1cnebius/common/v1/error.proto\x12\x10nebius.common.v1\"\xb6\x06\n\x0cServiceError\x12\x0f\n\x07service\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x33\n\x0b\x62\x61\x64_request\x18\x64 \x01(\x0b\x32\x1c.nebius.common.v1.BadRequestH\x00\x12@\n\x12\x62\x61\x64_resource_state\x18n \x01(\x0b\x32\".nebius.common.v1.BadResourceStateH\x00\x12@\n\x12resource_not_found\x18o \x01(\x0b\x32\".nebius.common.v1.ResourceNotFoundH\x00\x12J\n\x17resource_already_exists\x18p \x01(\x0b\x32\'.nebius.common.v1.ResourceAlreadyExistsH\x00\x12\x34\n\x0cout_of_range\x18q \x01(\x0b\x32\x1c.nebius.common.v1.OutOfRangeH\x00\x12?\n\x11permission_denied\x18x \x01(\x0b\x32\".nebius.common.v1.PermissionDeniedH\x00\x12@\n\x11resource_conflict\x18\x82\x01 \x01(\x0b\x32\".nebius.common.v1.ResourceConflictH\x00\x12@\n\x11operation_aborted\x18\x83\x01 \x01(\x0b\x32\".nebius.common.v1.OperationAbortedH\x00\x12?\n\x11too_many_requests\x18\x8c\x01 \x01(\x0b\x32!.nebius.common.v1.TooManyRequestsH\x00\x12\x38\n\rquota_failure\x18\x8d\x01 \x01(\x0b\x32\x1e.nebius.common.v1.QuotaFailureH\x00\x12\x45\n\x14not_enough_resources\x18\x8e\x01 \x01(\x0b\x32$.nebius.common.v1.NotEnoughResourcesH\x00\x12:\n\x0einternal_error\x18\xe7\x07 \x01(\x0b\x32\x1f.nebius.common.v1.InternalErrorH\x00\x42\t\n\x07\x64\x65tails\"u\n\nBadRequest\x12:\n\nviolations\x18\x01 \x03(\x0b\x32&.nebius.common.v1.BadRequest.Violation\x1a+\n\tViolation\x12\r\n\x05\x66ield\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"8\n\x10\x42\x61\x64ResourceState\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\'\n\x10ResourceNotFound\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\",\n\x15ResourceAlreadyExists\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"8\n\x10ResourceConflict\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"^\n\x10OperationAborted\x12\x14\n\x0coperation_id\x18\x01 \x01(\t\x12\x1f\n\x17\x61\x62orted_by_operation_id\x18\x02 \x01(\t\x12\x13\n\x0bresource_id\x18\x03 \x01(\t\".\n\nOutOfRange\x12\x11\n\trequested\x18\x01 \x01(\t\x12\r\n\x05limit\x18\x02 \x01(\t\"\'\n\x10PermissionDenied\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"5\n\rInternalError\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x10\n\x08trace_id\x18\x02 \x01(\t\"$\n\x0fTooManyRequests\x12\x11\n\tviolation\x18\x01 \x01(\t\"\x9b\x01\n\x0cQuotaFailure\x12<\n\nviolations\x18\x01 \x03(\x0b\x32(.nebius.common.v1.QuotaFailure.Violation\x1aM\n\tViolation\x12\r\n\x05quota\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\r\n\x05limit\x18\x03 \x01(\t\x12\x11\n\trequested\x18\x04 \x01(\t\"\xa0\x01\n\x12NotEnoughResources\x12\x42\n\nviolations\x18\x01 \x03(\x0b\x32..nebius.common.v1.NotEnoughResources.Violation\x1a\x46\n\tViolation\x12\x15\n\rresource_type\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x11\n\trequested\x18\x03 \x01(\tBW\n\x17\x61i.nebius.pub.common.v1B\nErrorProtoP\x01Z.github.com/nebius/gosdk/proto/nebius/common/v1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,31 +22,35 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\027ai.nebius.pub.common.v1B\nErrorProtoP\001Z.github.com/nebius/gosdk/proto/nebius/common/v1'
   _globals['_SERVICEERROR']._serialized_start=51
-  _globals['_SERVICEERROR']._serialized_end=802
-  _globals['_BADREQUEST']._serialized_start=804
-  _globals['_BADREQUEST']._serialized_end=921
-  _globals['_BADREQUEST_VIOLATION']._serialized_start=878
-  _globals['_BADREQUEST_VIOLATION']._serialized_end=921
-  _globals['_BADRESOURCESTATE']._serialized_start=923
-  _globals['_BADRESOURCESTATE']._serialized_end=979
-  _globals['_RESOURCENOTFOUND']._serialized_start=981
-  _globals['_RESOURCENOTFOUND']._serialized_end=1020
-  _globals['_RESOURCEALREADYEXISTS']._serialized_start=1022
-  _globals['_RESOURCEALREADYEXISTS']._serialized_end=1066
-  _globals['_RESOURCECONFLICT']._serialized_start=1068
-  _globals['_RESOURCECONFLICT']._serialized_end=1124
-  _globals['_OPERATIONABORTED']._serialized_start=1126
-  _globals['_OPERATIONABORTED']._serialized_end=1220
-  _globals['_OUTOFRANGE']._serialized_start=1222
-  _globals['_OUTOFRANGE']._serialized_end=1268
-  _globals['_PERMISSIONDENIED']._serialized_start=1270
-  _globals['_PERMISSIONDENIED']._serialized_end=1309
-  _globals['_INTERNALERROR']._serialized_start=1311
-  _globals['_INTERNALERROR']._serialized_end=1364
-  _globals['_TOOMANYREQUESTS']._serialized_start=1366
-  _globals['_TOOMANYREQUESTS']._serialized_end=1402
-  _globals['_QUOTAFAILURE']._serialized_start=1405
-  _globals['_QUOTAFAILURE']._serialized_end=1560
-  _globals['_QUOTAFAILURE_VIOLATION']._serialized_start=1483
-  _globals['_QUOTAFAILURE_VIOLATION']._serialized_end=1560
+  _globals['_SERVICEERROR']._serialized_end=873
+  _globals['_BADREQUEST']._serialized_start=875
+  _globals['_BADREQUEST']._serialized_end=992
+  _globals['_BADREQUEST_VIOLATION']._serialized_start=949
+  _globals['_BADREQUEST_VIOLATION']._serialized_end=992
+  _globals['_BADRESOURCESTATE']._serialized_start=994
+  _globals['_BADRESOURCESTATE']._serialized_end=1050
+  _globals['_RESOURCENOTFOUND']._serialized_start=1052
+  _globals['_RESOURCENOTFOUND']._serialized_end=1091
+  _globals['_RESOURCEALREADYEXISTS']._serialized_start=1093
+  _globals['_RESOURCEALREADYEXISTS']._serialized_end=1137
+  _globals['_RESOURCECONFLICT']._serialized_start=1139
+  _globals['_RESOURCECONFLICT']._serialized_end=1195
+  _globals['_OPERATIONABORTED']._serialized_start=1197
+  _globals['_OPERATIONABORTED']._serialized_end=1291
+  _globals['_OUTOFRANGE']._serialized_start=1293
+  _globals['_OUTOFRANGE']._serialized_end=1339
+  _globals['_PERMISSIONDENIED']._serialized_start=1341
+  _globals['_PERMISSIONDENIED']._serialized_end=1380
+  _globals['_INTERNALERROR']._serialized_start=1382
+  _globals['_INTERNALERROR']._serialized_end=1435
+  _globals['_TOOMANYREQUESTS']._serialized_start=1437
+  _globals['_TOOMANYREQUESTS']._serialized_end=1473
+  _globals['_QUOTAFAILURE']._serialized_start=1476
+  _globals['_QUOTAFAILURE']._serialized_end=1631
+  _globals['_QUOTAFAILURE_VIOLATION']._serialized_start=1554
+  _globals['_QUOTAFAILURE_VIOLATION']._serialized_end=1631
+  _globals['_NOTENOUGHRESOURCES']._serialized_start=1634
+  _globals['_NOTENOUGHRESOURCES']._serialized_end=1794
+  _globals['_NOTENOUGHRESOURCES_VIOLATION']._serialized_start=1724
+  _globals['_NOTENOUGHRESOURCES_VIOLATION']._serialized_end=1794
 # @@protoc_insertion_point(module_scope)

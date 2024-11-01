@@ -68,6 +68,27 @@ class ListSubnetsRequest(google.protobuf.message.Message):
 global___ListSubnetsRequest = ListSubnetsRequest
 
 @typing.final
+class ListSubnetsByNetworkRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    NETWORK_ID_FIELD_NUMBER: builtins.int
+    PAGE_SIZE_FIELD_NUMBER: builtins.int
+    PAGE_TOKEN_FIELD_NUMBER: builtins.int
+    network_id: builtins.str
+    page_size: builtins.int
+    page_token: builtins.str
+    def __init__(
+        self,
+        *,
+        network_id: builtins.str = ...,
+        page_size: builtins.int = ...,
+        page_token: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["network_id", b"network_id", "page_size", b"page_size", "page_token", b"page_token"]) -> None: ...
+
+global___ListSubnetsByNetworkRequest = ListSubnetsByNetworkRequest
+
+@typing.final
 class ListSubnetsResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

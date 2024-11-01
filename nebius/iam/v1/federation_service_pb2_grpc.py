@@ -2,12 +2,13 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
+from nebius.common.v1 import metadata_pb2 as nebius_dot_common_dot_v1_dot_metadata__pb2
 from nebius.common.v1 import operation_pb2 as nebius_dot_common_dot_v1_dot_operation__pb2
-from nebius.storage.v1 import bucket_pb2 as nebius_dot_storage_dot_v1_dot_bucket__pb2
-from nebius.storage.v1 import bucket_service_pb2 as nebius_dot_storage_dot_v1_dot_bucket__service__pb2
+from nebius.iam.v1 import federation_pb2 as nebius_dot_iam_dot_v1_dot_federation__pb2
+from nebius.iam.v1 import federation_service_pb2 as nebius_dot_iam_dot_v1_dot_federation__service__pb2
 
 
-class BucketServiceStub(object):
+class FederationServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -16,40 +17,46 @@ class BucketServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Get = channel.unary_unary(
-                '/nebius.storage.v1.BucketService/Get',
-                request_serializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.GetBucketRequest.SerializeToString,
-                response_deserializer=nebius_dot_storage_dot_v1_dot_bucket__pb2.Bucket.FromString,
-                )
-        self.GetByName = channel.unary_unary(
-                '/nebius.storage.v1.BucketService/GetByName',
-                request_serializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.GetBucketByNameRequest.SerializeToString,
-                response_deserializer=nebius_dot_storage_dot_v1_dot_bucket__pb2.Bucket.FromString,
-                )
-        self.List = channel.unary_unary(
-                '/nebius.storage.v1.BucketService/List',
-                request_serializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.ListBucketsRequest.SerializeToString,
-                response_deserializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.ListBucketsResponse.FromString,
-                )
         self.Create = channel.unary_unary(
-                '/nebius.storage.v1.BucketService/Create',
-                request_serializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.CreateBucketRequest.SerializeToString,
+                '/nebius.iam.v1.FederationService/Create',
+                request_serializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.CreateFederationRequest.SerializeToString,
                 response_deserializer=nebius_dot_common_dot_v1_dot_operation__pb2.Operation.FromString,
                 )
+        self.Get = channel.unary_unary(
+                '/nebius.iam.v1.FederationService/Get',
+                request_serializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.GetFederationRequest.SerializeToString,
+                response_deserializer=nebius_dot_iam_dot_v1_dot_federation__pb2.Federation.FromString,
+                )
+        self.GetByName = channel.unary_unary(
+                '/nebius.iam.v1.FederationService/GetByName',
+                request_serializer=nebius_dot_common_dot_v1_dot_metadata__pb2.GetByNameRequest.SerializeToString,
+                response_deserializer=nebius_dot_iam_dot_v1_dot_federation__pb2.Federation.FromString,
+                )
+        self.List = channel.unary_unary(
+                '/nebius.iam.v1.FederationService/List',
+                request_serializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.ListFederationsRequest.SerializeToString,
+                response_deserializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.ListFederationsResponse.FromString,
+                )
         self.Update = channel.unary_unary(
-                '/nebius.storage.v1.BucketService/Update',
-                request_serializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.UpdateBucketRequest.SerializeToString,
+                '/nebius.iam.v1.FederationService/Update',
+                request_serializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.UpdateFederationRequest.SerializeToString,
                 response_deserializer=nebius_dot_common_dot_v1_dot_operation__pb2.Operation.FromString,
                 )
         self.Delete = channel.unary_unary(
-                '/nebius.storage.v1.BucketService/Delete',
-                request_serializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.DeleteBucketRequest.SerializeToString,
+                '/nebius.iam.v1.FederationService/Delete',
+                request_serializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.DeleteFederationRequest.SerializeToString,
                 response_deserializer=nebius_dot_common_dot_v1_dot_operation__pb2.Operation.FromString,
                 )
 
 
-class BucketServiceServicer(object):
+class FederationServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def Create(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def Get(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -69,12 +76,6 @@ class BucketServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Create(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def Update(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -88,47 +89,64 @@ class BucketServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_BucketServiceServicer_to_server(servicer, server):
+def add_FederationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'Create': grpc.unary_unary_rpc_method_handler(
+                    servicer.Create,
+                    request_deserializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.CreateFederationRequest.FromString,
+                    response_serializer=nebius_dot_common_dot_v1_dot_operation__pb2.Operation.SerializeToString,
+            ),
             'Get': grpc.unary_unary_rpc_method_handler(
                     servicer.Get,
-                    request_deserializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.GetBucketRequest.FromString,
-                    response_serializer=nebius_dot_storage_dot_v1_dot_bucket__pb2.Bucket.SerializeToString,
+                    request_deserializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.GetFederationRequest.FromString,
+                    response_serializer=nebius_dot_iam_dot_v1_dot_federation__pb2.Federation.SerializeToString,
             ),
             'GetByName': grpc.unary_unary_rpc_method_handler(
                     servicer.GetByName,
-                    request_deserializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.GetBucketByNameRequest.FromString,
-                    response_serializer=nebius_dot_storage_dot_v1_dot_bucket__pb2.Bucket.SerializeToString,
+                    request_deserializer=nebius_dot_common_dot_v1_dot_metadata__pb2.GetByNameRequest.FromString,
+                    response_serializer=nebius_dot_iam_dot_v1_dot_federation__pb2.Federation.SerializeToString,
             ),
             'List': grpc.unary_unary_rpc_method_handler(
                     servicer.List,
-                    request_deserializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.ListBucketsRequest.FromString,
-                    response_serializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.ListBucketsResponse.SerializeToString,
-            ),
-            'Create': grpc.unary_unary_rpc_method_handler(
-                    servicer.Create,
-                    request_deserializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.CreateBucketRequest.FromString,
-                    response_serializer=nebius_dot_common_dot_v1_dot_operation__pb2.Operation.SerializeToString,
+                    request_deserializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.ListFederationsRequest.FromString,
+                    response_serializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.ListFederationsResponse.SerializeToString,
             ),
             'Update': grpc.unary_unary_rpc_method_handler(
                     servicer.Update,
-                    request_deserializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.UpdateBucketRequest.FromString,
+                    request_deserializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.UpdateFederationRequest.FromString,
                     response_serializer=nebius_dot_common_dot_v1_dot_operation__pb2.Operation.SerializeToString,
             ),
             'Delete': grpc.unary_unary_rpc_method_handler(
                     servicer.Delete,
-                    request_deserializer=nebius_dot_storage_dot_v1_dot_bucket__service__pb2.DeleteBucketRequest.FromString,
+                    request_deserializer=nebius_dot_iam_dot_v1_dot_federation__service__pb2.DeleteFederationRequest.FromString,
                     response_serializer=nebius_dot_common_dot_v1_dot_operation__pb2.Operation.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'nebius.storage.v1.BucketService', rpc_method_handlers)
+            'nebius.iam.v1.FederationService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class BucketService(object):
+class FederationService(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def Create(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/nebius.iam.v1.FederationService/Create',
+            nebius_dot_iam_dot_v1_dot_federation__service__pb2.CreateFederationRequest.SerializeToString,
+            nebius_dot_common_dot_v1_dot_operation__pb2.Operation.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Get(request,
@@ -141,9 +159,9 @@ class BucketService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/nebius.storage.v1.BucketService/Get',
-            nebius_dot_storage_dot_v1_dot_bucket__service__pb2.GetBucketRequest.SerializeToString,
-            nebius_dot_storage_dot_v1_dot_bucket__pb2.Bucket.FromString,
+        return grpc.experimental.unary_unary(request, target, '/nebius.iam.v1.FederationService/Get',
+            nebius_dot_iam_dot_v1_dot_federation__service__pb2.GetFederationRequest.SerializeToString,
+            nebius_dot_iam_dot_v1_dot_federation__pb2.Federation.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -158,9 +176,9 @@ class BucketService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/nebius.storage.v1.BucketService/GetByName',
-            nebius_dot_storage_dot_v1_dot_bucket__service__pb2.GetBucketByNameRequest.SerializeToString,
-            nebius_dot_storage_dot_v1_dot_bucket__pb2.Bucket.FromString,
+        return grpc.experimental.unary_unary(request, target, '/nebius.iam.v1.FederationService/GetByName',
+            nebius_dot_common_dot_v1_dot_metadata__pb2.GetByNameRequest.SerializeToString,
+            nebius_dot_iam_dot_v1_dot_federation__pb2.Federation.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -175,26 +193,9 @@ class BucketService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/nebius.storage.v1.BucketService/List',
-            nebius_dot_storage_dot_v1_dot_bucket__service__pb2.ListBucketsRequest.SerializeToString,
-            nebius_dot_storage_dot_v1_dot_bucket__service__pb2.ListBucketsResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def Create(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/nebius.storage.v1.BucketService/Create',
-            nebius_dot_storage_dot_v1_dot_bucket__service__pb2.CreateBucketRequest.SerializeToString,
-            nebius_dot_common_dot_v1_dot_operation__pb2.Operation.FromString,
+        return grpc.experimental.unary_unary(request, target, '/nebius.iam.v1.FederationService/List',
+            nebius_dot_iam_dot_v1_dot_federation__service__pb2.ListFederationsRequest.SerializeToString,
+            nebius_dot_iam_dot_v1_dot_federation__service__pb2.ListFederationsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -209,8 +210,8 @@ class BucketService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/nebius.storage.v1.BucketService/Update',
-            nebius_dot_storage_dot_v1_dot_bucket__service__pb2.UpdateBucketRequest.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/nebius.iam.v1.FederationService/Update',
+            nebius_dot_iam_dot_v1_dot_federation__service__pb2.UpdateFederationRequest.SerializeToString,
             nebius_dot_common_dot_v1_dot_operation__pb2.Operation.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -226,8 +227,8 @@ class BucketService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/nebius.storage.v1.BucketService/Delete',
-            nebius_dot_storage_dot_v1_dot_bucket__service__pb2.DeleteBucketRequest.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/nebius.iam.v1.FederationService/Delete',
+            nebius_dot_iam_dot_v1_dot_federation__service__pb2.DeleteFederationRequest.SerializeToString,
             nebius_dot_common_dot_v1_dot_operation__pb2.Operation.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

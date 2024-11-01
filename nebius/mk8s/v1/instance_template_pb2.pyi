@@ -32,6 +32,7 @@ class DiskSpec(google.protobuf.message.Message):
         """the list of available types will be clarified later, it is not final version"""
         NETWORK_HDD: DiskSpec._DiskType.ValueType  # 2
         NETWORK_SSD_IO_M3: DiskSpec._DiskType.ValueType  # 3
+        NETWORK_SSD_NON_REPLICATED: DiskSpec._DiskType.ValueType  # 4
 
     class DiskType(_DiskType, metaclass=_DiskTypeEnumTypeWrapper): ...
     UNSPECIFIED: DiskSpec.DiskType.ValueType  # 0
@@ -39,6 +40,7 @@ class DiskSpec(google.protobuf.message.Message):
     """the list of available types will be clarified later, it is not final version"""
     NETWORK_HDD: DiskSpec.DiskType.ValueType  # 2
     NETWORK_SSD_IO_M3: DiskSpec.DiskType.ValueType  # 3
+    NETWORK_SSD_NON_REPLICATED: DiskSpec.DiskType.ValueType  # 4
 
     SIZE_BYTES_FIELD_NUMBER: builtins.int
     SIZE_KIBIBYTES_FIELD_NUMBER: builtins.int

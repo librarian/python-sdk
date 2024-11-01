@@ -30,6 +30,7 @@ class _StateEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumType
     SCHEDULED_FOR_DELETION_BY_PARENT: _State.ValueType  # 5
     UNDELETING: _State.ValueType  # 6
     PURGING: _State.ValueType  # 7
+    PURGED: _State.ValueType  # 8
     CREATING: _State.ValueType  # 1001
     """DRAFT = 1000;"""
 
@@ -43,6 +44,7 @@ SCHEDULING_FOR_DELETION_BY_PARENT: State.ValueType  # 4
 SCHEDULED_FOR_DELETION_BY_PARENT: State.ValueType  # 5
 UNDELETING: State.ValueType  # 6
 PURGING: State.ValueType  # 7
+PURGED: State.ValueType  # 8
 CREATING: State.ValueType  # 1001
 """DRAFT = 1000;"""
 global___State = State

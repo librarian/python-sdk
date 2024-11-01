@@ -7,7 +7,6 @@ import abc
 import collections.abc
 import grpc
 import grpc.aio
-import nebius.common.v1.metadata_pb2
 import nebius.common.v1.operation_pb2
 import nebius.storage.v1.bucket_pb2
 import nebius.storage.v1.bucket_service_pb2
@@ -28,7 +27,7 @@ class BucketServiceStub:
     ]
 
     GetByName: grpc.UnaryUnaryMultiCallable[
-        nebius.common.v1.metadata_pb2.GetByNameRequest,
+        nebius.storage.v1.bucket_service_pb2.GetBucketByNameRequest,
         nebius.storage.v1.bucket_pb2.Bucket,
     ]
 
@@ -59,7 +58,7 @@ class BucketServiceAsyncStub:
     ]
 
     GetByName: grpc.aio.UnaryUnaryMultiCallable[
-        nebius.common.v1.metadata_pb2.GetByNameRequest,
+        nebius.storage.v1.bucket_service_pb2.GetBucketByNameRequest,
         nebius.storage.v1.bucket_pb2.Bucket,
     ]
 
@@ -94,7 +93,7 @@ class BucketServiceServicer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def GetByName(
         self,
-        request: nebius.common.v1.metadata_pb2.GetByNameRequest,
+        request: nebius.storage.v1.bucket_service_pb2.GetBucketByNameRequest,
         context: _ServicerContext,
     ) -> typing.Union[nebius.storage.v1.bucket_pb2.Bucket, collections.abc.Awaitable[nebius.storage.v1.bucket_pb2.Bucket]]: ...
 

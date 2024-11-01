@@ -19,15 +19,45 @@ class GetBucketRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ID_FIELD_NUMBER: builtins.int
+    WITH_DELETED_FIELD_NUMBER: builtins.int
     id: builtins.str
+    with_deleted: builtins.bool
+    """By default, only CREATING and ACTIVE buckets are visible.
+    DEPRECATED: soft-deleted buckets are shown by default.
+    """
     def __init__(
         self,
         *,
         id: builtins.str = ...,
+        with_deleted: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["id", b"id"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["id", b"id", "with_deleted", b"with_deleted"]) -> None: ...
 
 global___GetBucketRequest = GetBucketRequest
+
+@typing.final
+class GetBucketByNameRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PARENT_ID_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    WITH_DELETED_FIELD_NUMBER: builtins.int
+    parent_id: builtins.str
+    name: builtins.str
+    with_deleted: builtins.bool
+    """By default, only CREATING and ACTIVE buckets are visible.
+    DEPRECATED: soft-deleted buckets are shown by default.
+    """
+    def __init__(
+        self,
+        *,
+        parent_id: builtins.str = ...,
+        name: builtins.str = ...,
+        with_deleted: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["name", b"name", "parent_id", b"parent_id", "with_deleted", b"with_deleted"]) -> None: ...
+
+global___GetBucketByNameRequest = GetBucketByNameRequest
 
 @typing.final
 class CreateBucketRequest(google.protobuf.message.Message):
@@ -94,6 +124,7 @@ class ListBucketsRequest(google.protobuf.message.Message):
     PAGE_SIZE_FIELD_NUMBER: builtins.int
     PAGE_TOKEN_FIELD_NUMBER: builtins.int
     FILTER_FIELD_NUMBER: builtins.int
+    WITH_DELETED_FIELD_NUMBER: builtins.int
     parent_id: builtins.str
     """Represents the container ID."""
     page_size: builtins.int
@@ -102,6 +133,10 @@ class ListBucketsRequest(google.protobuf.message.Message):
     """Token for pagination, allowing the retrieval of the next set of results."""
     filter: builtins.str
     """A filter to narrow down the results based on specific criteria."""
+    with_deleted: builtins.bool
+    """By default, only CREATING and ACTIVE buckets are shown.
+    DEPRECATED: soft-deleted buckets are shown by default.
+    """
     def __init__(
         self,
         *,
@@ -109,8 +144,9 @@ class ListBucketsRequest(google.protobuf.message.Message):
         page_size: builtins.int = ...,
         page_token: builtins.str = ...,
         filter: builtins.str = ...,
+        with_deleted: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["filter", b"filter", "page_size", b"page_size", "page_token", b"page_token", "parent_id", b"parent_id"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["filter", b"filter", "page_size", b"page_size", "page_token", b"page_token", "parent_id", b"parent_id", "with_deleted", b"with_deleted"]) -> None: ...
 
 global___ListBucketsRequest = ListBucketsRequest
 

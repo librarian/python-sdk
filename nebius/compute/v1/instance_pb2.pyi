@@ -21,6 +21,21 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class _InstanceRecoveryPolicy:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _InstanceRecoveryPolicyEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_InstanceRecoveryPolicy.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    RECOVER: _InstanceRecoveryPolicy.ValueType  # 0
+    FAIL: _InstanceRecoveryPolicy.ValueType  # 1
+
+class InstanceRecoveryPolicy(_InstanceRecoveryPolicy, metaclass=_InstanceRecoveryPolicyEnumTypeWrapper): ...
+
+RECOVER: InstanceRecoveryPolicy.ValueType  # 0
+FAIL: InstanceRecoveryPolicy.ValueType  # 1
+global___InstanceRecoveryPolicy = InstanceRecoveryPolicy
+
 @typing.final
 class Instance(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -59,9 +74,11 @@ class InstanceSpec(google.protobuf.message.Message):
     FILESYSTEMS_FIELD_NUMBER: builtins.int
     CLOUD_INIT_USER_DATA_FIELD_NUMBER: builtins.int
     STOPPED_FIELD_NUMBER: builtins.int
+    RECOVERY_POLICY_FIELD_NUMBER: builtins.int
     service_account_id: builtins.str
     cloud_init_user_data: builtins.str
     stopped: builtins.bool
+    recovery_policy: global___InstanceRecoveryPolicy.ValueType
     @property
     def resources(self) -> global___ResourcesSpec: ...
     @property
@@ -86,9 +103,10 @@ class InstanceSpec(google.protobuf.message.Message):
         filesystems: collections.abc.Iterable[global___AttachedFilesystemSpec] | None = ...,
         cloud_init_user_data: builtins.str = ...,
         stopped: builtins.bool = ...,
+        recovery_policy: global___InstanceRecoveryPolicy.ValueType = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["boot_disk", b"boot_disk", "gpu_cluster", b"gpu_cluster", "resources", b"resources"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["boot_disk", b"boot_disk", "cloud_init_user_data", b"cloud_init_user_data", "filesystems", b"filesystems", "gpu_cluster", b"gpu_cluster", "network_interfaces", b"network_interfaces", "resources", b"resources", "secondary_disks", b"secondary_disks", "service_account_id", b"service_account_id", "stopped", b"stopped"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["boot_disk", b"boot_disk", "cloud_init_user_data", b"cloud_init_user_data", "filesystems", b"filesystems", "gpu_cluster", b"gpu_cluster", "network_interfaces", b"network_interfaces", "recovery_policy", b"recovery_policy", "resources", b"resources", "secondary_disks", b"secondary_disks", "service_account_id", b"service_account_id", "stopped", b"stopped"]) -> None: ...
 
 global___InstanceSpec = InstanceSpec
 
