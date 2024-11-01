@@ -39,7 +39,7 @@ submodule:  ## update submodules
 
 proto:  ## regenerate code from protobuf
 	rm -rf nebius
-	find api -name "v1alpha1" -type d -delete;
+
 	buf generate buf.build/bufbuild/protovalidate
 	python3 -m grpc_tools.protoc \
         --proto_path=api \
