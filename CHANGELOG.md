@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## v0.1.1 (2024-11-01)
+
+### Fix
+
+* fix: setup.py description ([`70cbc64`](https://github.com/librarian/python-sdk/commit/70cbc6471ed3a4b993d552b68de2d1504424839f))
+
+### Unknown
+
+* version bump ([`bd4e8f1`](https://github.com/librarian/python-sdk/commit/bd4e8f108cdbeb23fe92d141a6abbafe556a8b94))
+
+* version bump ([`6e5f205`](https://github.com/librarian/python-sdk/commit/6e5f20505283417ade221196eeebd99019304c21))
+
+* version bump ([`faf8a8c`](https://github.com/librarian/python-sdk/commit/faf8a8cae3375164e21c62d87192cc192c1d83c5))
+
+* version bump, makefile ([`169a74d`](https://github.com/librarian/python-sdk/commit/169a74d12fe1a13d2958283b5246914e09ca352f))
+
+* new endpoint, new protobufs ([`2a6f8d8`](https://github.com/librarian/python-sdk/commit/2a6f8d8a44ba48ba415506a87206e5b022b841c9))
+
+* new endpoint, new protobufs ([`c237b6e`](https://github.com/librarian/python-sdk/commit/c237b6e4de6a87b61a8949ba3c6b2ce4b0a44172))
+
+* Merge branch &#39;master&#39; of github.com:librarian/python-sdk ([`975c17c`](https://github.com/librarian/python-sdk/commit/975c17c73e656b6b763af675ee4dcba1aa2ea536))
+
 ## v0.1.0 (2024-10-15)
 
 ### Feature
@@ -29,6 +51,8 @@
 * fix: service account private key validation with new header ([`adbea9d`](https://github.com/librarian/python-sdk/commit/adbea9d02daa8b8b727299606096a1f2b1a3ee9d))
 
 ### Unknown
+
+* fixed tests ([`95030b1`](https://github.com/librarian/python-sdk/commit/95030b1670040a99ac726e8a00c2d1c4cede46af))
 
 * changes in github ([`457443a`](https://github.com/librarian/python-sdk/commit/457443a17b5fd602cbfd6c5b6862bc1caea047c7))
 
